@@ -1,4 +1,4 @@
-# @chaindefuser/1click-typescript-sdk
+# @chaindefuser/one-click-typescript-sdk
 
 A TypeScript SDK for interacting with the 1Click API. This SDK provides a type-safe way to interact with the 1Click API for cross-chain token swaps.
 
