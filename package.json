@@ -1,0 +1,65 @@
+{
+  "name": "@defuse-protocol/one-click-sdk-typescript",
+  "version": "0.0.1",
+  "description": "TypeScript SDK for 1Click API",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=16",
+    "pnpm": ">=8"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "fetch-api": "curl -o openapi.yaml https://1click.chaindefuser.com/docs/v0/openapi.yaml",
+    "generate": "openapi --input openapi.yaml --output ./src --client axios",
+    "generate:fresh": "pnpm run fetch-api && pnpm run generate",
+    "clean": "rm -rf dist node_modules",
+    "prepublishOnly": "pnpm run clean && pnpm install && pnpm run generate:fresh && pnpm run build",
+    "prepack": "pnpm run build",
+    "release": "pnpm run prepublishOnly && pnpm publish --access public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/defuse-protocol/one-click-sdk-typescript.git"
+  },
+  "bugs": {
+    "url": "https://github.com/defuse-protocol/one-click-sdk-typescript/issues"
+  },
+  "homepage": "https://github.com/defuse-protocol/one-click-sdk-typescript#readme",
+  "keywords": [
+    "1click",
+    "sdk",
+    "typescript",
+    "swap",
+    "defuse",
+    "defi"
+  ],
+  "author": "Defuse Protocol",
+  "license": "ISC",
+  "devDependencies": {
+    "openapi-typescript-codegen": "^0.29.0",
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.2"
+  },
+  "dependencies": {
+    "axios": "^1.6.8",
+    "form-data": "^4.0.0"
+  },
+  "packageManager": "pnpm@8.15.4",
+  "publishConfig": {
+    "access": "public"
+  }
+}
