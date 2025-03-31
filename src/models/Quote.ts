@@ -4,36 +4,36 @@
 /* eslint-disable */
 export type Quote = {
     /**
-     * Deposit address on chain of **originAsset** in case **depositType** is **ORIGIN_CHAIN**.
-     * Deposit address inside near intents in case **depositType** is **INTENTS**.
+     * <p>The deposit address on the chain of <code>originAsset</code> in case if <code>depositType</code> is <code>ORIGIN_CHAIN</code>.</p>
+     * <p>The deposit address inside of near intents (the verifier smart contract) in case if <code>depositType</code> is <code>INTENTS</code>.</p>
      */
     depositAddress?: string;
     /**
-     * Amount of origin asset
+     * Amount of the origin asset
      */
     amountIn: string;
     /**
-     * Amount of origin asset in readable format
+     * Amount of the origin asset in readable format
      */
     amountInFormatted: string;
     /**
-     * Amount of origin assets equivalent in USD
+     * Amount of the origin assets equivalent in USD
      */
     amountInUsd: string;
     /**
-     * Minimum amount of origin asset that will be used for swap
+     * Minimum amount of the origin asset that will be used for swap
      */
     minAmountIn: string;
     /**
-     * Amount of destination asset
+     * Amount of the destination asset
      */
     amountOut: string;
     /**
-     * Amount of destination asset in readable format
+     * Amount of the destination asset in readable format
      */
     amountOutFormatted: string;
     /**
-     * Amount of destination asset equivalent in USD
+     * Amount of the destination asset equivalent in USD
      */
     amountOutUsd: string;
     /**
@@ -41,15 +41,15 @@ export type Quote = {
      */
     minAmountOut: string;
     /**
-     * Time when deposit address will become inactive and funds might be lost
+     * Time when the deposit address will become inactive and funds might be lost
      */
     deadline?: string;
     /**
-     * Time when deposit address will become cold and swap processing will take more time
+     * Time when the deposit address will become cold and swap processing will take more time
      */
     timeWhenInactive?: string;
     /**
-     * Estimated time in seconds for swap to be executed after user deposit transaction is confirmed
+     * Estimated time in seconds for swap to be executed after the deposit transaction is confirmed
      */
     timeEstimate?: number;
 };

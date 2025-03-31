@@ -30,7 +30,7 @@ export type TokenResponse = {
     /**
      * Contract address of the token
      */
-    contractAddress: string;
+    contractAddress?: string;
 };
 export namespace TokenResponse {
     /**

@@ -13,7 +13,9 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class OneClickService {
     /**
-     * Returns tokens that can be swapped
+     * Get supported tokens
+     * <p>Retrieves a list of tokens currently supported by the 1Click API for asset swaps.</p>
+     * <p>Each token entry includes its blockchain, contract address (if available), price in USD, and other metadata such as symbol and decimals.</p>
      * @returns TokenResponse
      * @throws ApiError
      */
@@ -24,7 +26,11 @@ export class OneClickService {
         });
     }
     /**
-     * Returns the best quote with deposit address
+     * Request a swap quote
+     * <p>Generates a swap quote based on input parameters such as the assets, amount, slippage tolerance, and recipient/refund information.</p>
+     * <p>Returns pricing details, estimated time, and a unique <strong>deposit address</strong> to which tokens must be transferred to initiate the swap.</p>
+     * <p>You can set the <code>dry</code> parameter to <code>true</code> to simulate the quote request <strong>without generating a deposit address</strong> or initiating the swap process. This is useful for previewing swap parameters or validating input data without committing to an actual swap.</p>
+     * <p>This endpoint is the first required step in the swap process.</p>
      * @param requestBody
      * @returns QuoteResponse
      * @throws ApiError
@@ -43,7 +49,9 @@ export class OneClickService {
         });
     }
     /**
-     * Returns execution status for a given deposit address
+     * Check swap execution status
+     * <p>Retrieves the current status of a swap using the unique deposit address from the quote.</p>
+     * <p>The response includes the state of the swap (e.g., pending, processing, success, refunded) and any associated swap and transaction details.</p>
      * @param depositAddress
      * @returns GetExecutionStatusResponse
      * @throws ApiError
@@ -63,7 +71,9 @@ export class OneClickService {
         });
     }
     /**
-     * Submit a deposit transaction
+     * Submit deposit transaction hash
+     * <p>Optionally notifies the 1Click service that a deposit has been sent to the specified address, using the blockchain transaction hash.</p>
+     * <p>This step can speed up swap processing by allowing the system to preemptively verify the deposit.</p>
      * @param requestBody
      * @returns SubmitDepositTxResponse
      * @throws ApiError

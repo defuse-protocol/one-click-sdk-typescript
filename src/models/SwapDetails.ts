@@ -13,43 +13,43 @@ export type SwapDetails = {
      */
     nearTxHashes: Array<string>;
     /**
-     * Exact amount of **originToken** after trade was settled
+     * Exact amount of <code>originToken</code> after trade was settled
      */
-    amountIn: string;
+    amountIn?: string;
     /**
-     * Exact amount of **originToken** after trade was settled in readable format
+     * Exact amount of <code>originToken</code> after trade was settled in readable format
      */
-    amountInFormatted: string;
+    amountInFormatted?: string;
     /**
-     * Exact amount of **originToken** equivalent in USD
+     * Exact amount of <code>originToken</code> equivalent in USD
      */
-    amountInUsd: string;
+    amountInUsd?: string;
     /**
-     * Exact amount of **destinationToken** after trade was settled
+     * Exact amount of <code>destinationToken</code> after trade was settled
      */
-    amountOut: string;
+    amountOut?: string;
     /**
-     * Exact amount of **destinationToken** in readable format
+     * Exact amount of <code>destinationToken</code> in readable format
      */
-    amountOutFormatted: string;
+    amountOutFormatted?: string;
     /**
-     * Exact amount of **destinationToken** equivalent in USD
+     * Exact amount of <code>destinationToken</code> equivalent in USD
      */
-    amountOutUsd: string;
+    amountOutUsd?: string;
     /**
      * Actual slippage
      */
-    slippage: number;
+    slippage?: number;
     /**
-     * Hashes and explorer URLs for all transactions on origin chain
+     * Hashes and explorer URLs for all transactions on the origin chain
      */
     originChainTxHashes: Array<TransactionDetails>;
     /**
-     * Hashes and explorer URLs for all transactions on destination chain
+     * Hashes and explorer URLs for all transactions on the destination chain
      */
     destinationChainTxHashes: Array<TransactionDetails>;
     /**
-     * Amount of **originAsset** that got transferred to **refundTo**
+     * Amount of <code>originAsset</code> that got transferred to <code>refundTo</code>
      */
     refundedAmount?: string;
     /**
