@@ -51,6 +51,7 @@ export namespace TokenResponse {
         BERA = 'bera',
         BSC = 'bsc',
         POL = 'pol',
+        TRON = 'tron',
     }
 }
 

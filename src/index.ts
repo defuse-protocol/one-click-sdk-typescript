@@ -7,6 +7,7 @@ export { CancelablePromise, CancelError } from './core/CancelablePromise';
 export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
+export type { AppFee } from './models/AppFee';
 export type { BadRequestResponse } from './models/BadRequestResponse';
 export { GetExecutionStatusResponse } from './models/GetExecutionStatusResponse';
 export type { Quote } from './models/Quote';

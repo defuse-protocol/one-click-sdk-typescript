@@ -4,8 +4,9 @@
 /* eslint-disable */
 export type Quote = {
     /**
-     * <p>The deposit address on the chain of <code>originAsset</code> in case if <code>depositType</code> is <code>ORIGIN_CHAIN</code>.</p>
-     * <p>The deposit address inside of near intents (the verifier smart contract) in case if <code>depositType</code> is <code>INTENTS</code>.</p>
+     * The deposit address on the chain of `originAsset` in case if `depositType` is `ORIGIN_CHAIN`.
+     *
+     * The deposit address inside of near intents (the verifier smart contract) in case if `depositType` is `INTENTS`.
      */
     depositAddress?: string;
     /**

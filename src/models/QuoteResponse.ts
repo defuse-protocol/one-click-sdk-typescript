@@ -18,7 +18,7 @@ export type QuoteResponse = {
      */
     quoteRequest: QuoteRequest;
     /**
-     * Response that contains the deposit address to send "amount" of <code>originAsset</code> and possible output amount.
+     * Response that contains the deposit address to send "amount" of `originAsset` and possible output amount.
      */
     quote: Quote;
 };

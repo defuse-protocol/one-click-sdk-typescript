@@ -2,22 +2,21 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { AppFee } from './AppFee';
 export type QuoteRequest = {
     /**
-     * <p>Flag indicating whether this is a dry run request.</p>
-     * <p>If <code>true</code>, the response will <strong>NOT</strong> contain the following fields:<ul>
-     * <li><code>depositAddress</code></li>
-     * <li><code>timeWhenInactive</code></li>
-     * <li><code>timeEstimate</code></li>
-     * <li><code>deadline</code></li>
-     * </ul></p>
+     * Flag indicating whether this is a dry run request.
+     * If `true`, the response will **NOT** contain the following fields:
+     * - `depositAddress`
+     * - `timeWhenInactive`
+     * - `timeEstimate`
+     * - `deadline`
      */
     dry: boolean;
     /**
-     * <p>Whether to use the amount as the output or the input for the basis of the swap:<ul>
-     * <li><code>EXACT_INPUT</code> - request output amount for exact input.</li>
-     * <li><code>EXACT_OUTPUT</code> - request output amount for exact output. The <code>refundTo</code> address will always receive excess tokens back even after the swap is complete.</li>
-     * </ul></p>
+     * Whether to use the amount as the output or the input for the basis of the swap:
+     * - `EXACT_INPUT` - request output amount for exact input.
+     * - `EXACT_OUTPUT` - request output amount for exact output. The `refundTo` address will always receive excess tokens back even after the swap is complete.
      */
     swapType: QuoteRequest.swapType;
     /**
@@ -29,10 +28,9 @@ export type QuoteRequest = {
      */
     originAsset: string;
     /**
-     * <p>Type of the deposit address:<ul>
-     * <li><code>ORIGIN_CHAIN</code> - deposit address on the origin chain</li>
-     * <li><code>INTENTS</code> - <strong>account ID</strong> inside near intents to which you should transfer assets inside intents.</li>
-     * </ul></p>
+     * Type of the deposit address:
+     * - `ORIGIN_CHAIN` - deposit address on the origin chain
+     * - `INTENTS` - **account ID** inside near intents to which you should transfer assets inside intents.
      */
     depositType: QuoteRequest.depositType;
     /**
@@ -48,21 +46,19 @@ export type QuoteRequest = {
      */
     refundTo: string;
     /**
-     * <p>Type of refund address:<ul>
-     * <li><code>ORIGIN_CHAIN</code> - assets will be refunded to <code>refundTo</code> address on the origin chain</li>
-     * <li><code>INTENTS</code> - assets will be refunded to <code>refundTo</code> intents account</li>
-     * </ul></p>
+     * Type of refund address:
+     * - `ORIGIN_CHAIN` - assets will be refunded to `refundTo` address on the origin chain
+     * - `INTENTS` - assets will be refunded to `refundTo` intents account
      */
     refundType: QuoteRequest.refundType;
     /**
-     * Recipient address. The format should match <code>recipientType</code>.
+     * Recipient address. The format should match `recipientType`.
      */
     recipient: string;
     /**
-     * <p>Type of recipient address:<ul>
-     * <li><code>DESTINATION_CHAIN</code> - assets will be transferred to chain of <code>destinationAsset</code></li>
-     * <li><code>INTENTS</code> - assets will be transferred to account inside intents</li>
-     * </ul></p>
+     * Type of recipient address:
+     * - `DESTINATION_CHAIN` - assets will be transferred to chain of `destinationAsset`
+     * - `INTENTS` - assets will be transferred to account inside intents
      */
     recipientType: QuoteRequest.recipientType;
     /**
@@ -77,43 +73,43 @@ export type QuoteRequest = {
      * Time in milliseconds user is willing to wait for quote from relay.
      */
     quoteWaitingTimeMs?: number;
+    /**
+     * List of recipients and their fees
+     */
+    appFees?: Array<AppFee>;
 };
 export namespace QuoteRequest {
     /**
-     * <p>Whether to use the amount as the output or the input for the basis of the swap:<ul>
-     * <li><code>EXACT_INPUT</code> - request output amount for exact input.</li>
-     * <li><code>EXACT_OUTPUT</code> - request output amount for exact output. The <code>refundTo</code> address will always receive excess tokens back even after the swap is complete.</li>
-     * </ul></p>
+     * Whether to use the amount as the output or the input for the basis of the swap:
+     * - `EXACT_INPUT` - request output amount for exact input.
+     * - `EXACT_OUTPUT` - request output amount for exact output. The `refundTo` address will always receive excess tokens back even after the swap is complete.
      */
     export enum swapType {
         EXACT_INPUT = 'EXACT_INPUT',
         EXACT_OUTPUT = 'EXACT_OUTPUT',
     }
     /**
-     * <p>Type of the deposit address:<ul>
-     * <li><code>ORIGIN_CHAIN</code> - deposit address on the origin chain</li>
-     * <li><code>INTENTS</code> - <strong>account ID</strong> inside near intents to which you should transfer assets inside intents.</li>
-     * </ul></p>
+     * Type of the deposit address:
+     * - `ORIGIN_CHAIN` - deposit address on the origin chain
+     * - `INTENTS` - **account ID** inside near intents to which you should transfer assets inside intents.
      */
     export enum depositType {
         ORIGIN_CHAIN = 'ORIGIN_CHAIN',
         INTENTS = 'INTENTS',
     }
     /**
-     * <p>Type of refund address:<ul>
-     * <li><code>ORIGIN_CHAIN</code> - assets will be refunded to <code>refundTo</code> address on the origin chain</li>
-     * <li><code>INTENTS</code> - assets will be refunded to <code>refundTo</code> intents account</li>
-     * </ul></p>
+     * Type of refund address:
+     * - `ORIGIN_CHAIN` - assets will be refunded to `refundTo` address on the origin chain
+     * - `INTENTS` - assets will be refunded to `refundTo` intents account
      */
     export enum refundType {
         ORIGIN_CHAIN = 'ORIGIN_CHAIN',
         INTENTS = 'INTENTS',
     }
     /**
-     * <p>Type of recipient address:<ul>
-     * <li><code>DESTINATION_CHAIN</code> - assets will be transferred to chain of <code>destinationAsset</code></li>
-     * <li><code>INTENTS</code> - assets will be transferred to account inside intents</li>
-     * </ul></p>
+     * Type of recipient address:
+     * - `DESTINATION_CHAIN` - assets will be transferred to chain of `destinationAsset`
+     * - `INTENTS` - assets will be transferred to account inside intents
      */
     export enum recipientType {
         DESTINATION_CHAIN = 'DESTINATION_CHAIN',
