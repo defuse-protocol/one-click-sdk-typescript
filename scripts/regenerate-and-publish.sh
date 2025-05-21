@@ -50,4 +50,8 @@ echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
 npm publish --access public
 rm -f .npmrc
 
+# Push changes to the repository
+echo "Pushing changes to remote..."
+git push
+
 echo "TypeScript SDK regeneration process completed for API version: ${API_VERSION}" 
