@@ -1,6 +1,8 @@
 name: Generate and Publish SDK
 
 on:
+  repository_dispatch:
+    types: [generate-sdk]
   workflow_dispatch:
     inputs:
       version:

@@ -28,6 +28,10 @@ import { OneClickService, OpenAPI, QuoteRequestDto } from '@defuse-protocol/one-
 // Initialize the API client
 OpenAPI.BASE = 'https://1click.chaindefuser.com';
 
+// Configure JWT authentication (required for most endpoints)
+const JWT_TOKEN = 'YOUR_JWT_TOKEN';
+OpenAPI.TOKEN = JWT_TOKEN;
+
 // Create a quote request
 const quoteRequest: QuoteRequestDto = {
     dry: true,
@@ -67,6 +71,35 @@ const result = await OneClickService.oneClickControllerSubmitDepositTx({
 });
 ```
 
+## Authentication
+
+The 1Click API requires JWT authentication for most endpoints. You must configure authentication as follows:
+
+### Static Token (Required)
+
+```typescript
+// Set a static JWT token - required for authenticated endpoints
+const JWT_TOKEN = 'YOUR_JWT_TOKEN';
+OpenAPI.TOKEN = JWT_TOKEN;
+```
+
+### Dynamic Token Provider (for token refresh)
+
+```typescript
+// Set a function that returns a fresh token when needed
+OpenAPI.TOKEN = async () => {
+  // Get a fresh token from your authentication system
+  return 'FRESH_JWT_TOKEN';
+};
+```
+
+### Protected Endpoints
+
+The following endpoints require JWT authentication:
+- `OneClickService.getQuote()`
+- `OneClickService.submitDepositTx()`
+- `OneClickService.getExecutionStatus()`
+
 ## Error Handling
 
 The SDK throws typed errors that you can catch and handle:
@@ -75,7 +108,10 @@ The SDK throws typed errors that you can catch and handle:
 try {
     const quote = await OneClickService.oneClickControllerGetQuote(quoteRequest);
 } catch (error) {
-    if (error.status === 400) {
+    if (error instanceof ApiError && error.status === 401) {
+        // Handle authentication errors
+        console.error('Authentication failed: JWT token is missing or invalid');
+    } else if (error instanceof ApiError && error.status === 400) {
         // Handle bad request
         console.error('Invalid request:', error.body);
     } else {
