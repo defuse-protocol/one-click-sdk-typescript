@@ -29,7 +29,7 @@ echo "Committing changes..."
 git config user.email "action@github.com"
 git config user.name "GitHub Action"
 git add .
-git commit -m "Generate TypeScript SDK for version ${VERSION_NUMBER}" || echo "No changes to commit"
+git commit -m "Release: ${VERSION_NUMBER} version" || echo "No changes to commit"
 
 # Publish to npm
 echo "Publishing to npm..."
