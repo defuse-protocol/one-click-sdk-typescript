@@ -31,3 +31,5 @@ Thumbs.db
 
 # Generated API spec
 openapi.yaml 
+
+secrets/secrets.yaml

@@ -1,4 +1,5 @@
 name: Generate and Publish SDK
+
 on:
   workflow_dispatch:
     inputs:
@@ -9,17 +10,20 @@ on:
 
 jobs:
   generate-sdk:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
           registry-url: https://registry.npmjs.org/
-      
+
       - name: Get version
         id: get-version
         run: |
@@ -27,14 +31,37 @@ jobs:
           if [ -z "$VERSION" ] && [ -n "${{ github.event.client_payload.VERSION }}" ]; then
             VERSION="${{ github.event.client_payload.VERSION }}"
           fi
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "Using API version: $VERSION"
-      
+
+      - name: Setup SOPS
+        uses: mdgreenwald/mozilla-sops-action@v1
+        with:
+          version: latest
+
+      - name: Decrypt secrets file
+        run: |
+          export SOPS_AGE_KEY="${{ secrets.SOPS_AGE_KEY }}"
+          sops -d secrets/secrets.enc.yaml > secrets/secrets.yaml
+
+      - name: Install yq
+        run: |
+          YQ_VERSION="v4.45.1"
+          wget https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64 -O /usr/local/bin/yq
+          chmod +x /usr/local/bin/yq
+
+      - name: Load NPM token from secrets
+        id: load-npm-token
+        run: |
+          NPM_TOKEN=$(yq '.NPM_TOKEN' secrets/secrets.yaml)
+          echo "::add-mask::$NPM_TOKEN"
+          echo "NPM_TOKEN=$NPM_TOKEN" >> "$GITHUB_OUTPUT"
+
       - name: Generate and publish SDK
         if: steps.get-version.outputs.version != ''
         env:
           API_VERSION: ${{ steps.get-version.outputs.version }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ steps.load-npm-token.outputs.NPM_TOKEN }}
         run: |
           chmod +x ./scripts/regenerate-and-publish.sh
           ./scripts/regenerate-and-publish.sh
