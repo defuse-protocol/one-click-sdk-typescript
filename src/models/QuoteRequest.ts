@@ -66,7 +66,7 @@ export type QuoteRequest = {
      */
     deadline: string;
     /**
-     * Referral identifier
+     * Referral identifier(lower case only)
      */
     referral?: string;
     /**
