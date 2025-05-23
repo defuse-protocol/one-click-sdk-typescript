@@ -1,6 +1,6 @@
 {
   "name": "@defuse-protocol/one-click-sdk-typescript",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "TypeScript SDK for 1Click API",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

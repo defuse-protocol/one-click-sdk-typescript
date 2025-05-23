@@ -52,6 +52,6 @@ export type Quote = {
     /**
      * Estimated time in seconds for swap to be executed after the deposit transaction is confirmed
      */
-    timeEstimate?: number;
+    timeEstimate: number;
 };
 

@@ -9,7 +9,6 @@ export type QuoteRequest = {
      * If `true`, the response will **NOT** contain the following fields:
      * - `depositAddress`
      * - `timeWhenInactive`
-     * - `timeEstimate`
      * - `deadline`
      */
     dry: boolean;
