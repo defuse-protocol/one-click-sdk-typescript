@@ -52,6 +52,7 @@ export namespace TokenResponse {
         BSC = 'bsc',
         POL = 'pol',
         TRON = 'tron',
+        SUI = 'sui',
     }
 }
 

@@ -61,11 +61,11 @@ export type QuoteRequest = {
      */
     recipientType: QuoteRequest.recipientType;
     /**
-     * Timestamp in ISO format, that identifies when user refund will begin if the swap isn't completed by then.
+     * Timestamp in ISO format, that identifies when user refund will begin if the swap isn't completed by then. It needs to exceed the time required for the deposit tx to be minted, e.g. for Bitcoin it might require ~1h depending on the gas fees paid.
      */
     deadline: string;
     /**
-     * Referral identifier(lower case only)
+     * Referral identifier(lower case only). It will be reflected in the on-chain data and displayed on public analytics platforms.
      */
     referral?: string;
     /**
