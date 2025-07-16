@@ -53,6 +53,8 @@ export namespace TokenResponse {
         POL = 'pol',
         TRON = 'tron',
         SUI = 'sui',
+        OP = 'op',
+        AVAX = 'avax',
     }
 }
 

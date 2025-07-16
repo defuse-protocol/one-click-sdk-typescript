@@ -55,6 +55,14 @@ export type QuoteRequest = {
      */
     recipient: string;
     /**
+     * EVM address of a transfer recipient in a virtual chain
+     */
+    virtualChainRecipient?: string;
+    /**
+     * EVM address of a refund recipient in a virtual chain
+     */
+    virtualChainRefundRecipient?: string;
+    /**
      * Type of recipient address:
      * - `DESTINATION_CHAIN` - assets will be transferred to chain of `destinationAsset`
      * - `INTENTS` - assets will be transferred to account inside intents

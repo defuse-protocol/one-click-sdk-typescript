@@ -53,5 +53,13 @@ export type Quote = {
      * Estimated time in seconds for swap to be executed after the deposit transaction is confirmed
      */
     timeEstimate: number;
+    /**
+     * EVM address of a transfer recipient in a virtual chain
+     */
+    virtualChainRecipient?: string;
+    /**
+     * EVM address of a refund recipient in a virtual chain
+     */
+    virtualChainRefundRecipient?: string;
 };
 
