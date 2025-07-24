@@ -16,6 +16,7 @@ export type QuoteRequest = {
      * Whether to use the amount as the output or the input for the basis of the swap:
      * - `EXACT_INPUT` - request output amount for exact input.
      * - `EXACT_OUTPUT` - request output amount for exact output. The `refundTo` address will always receive excess tokens back even after the swap is complete.
+     * - `FLEX_INPUT` - flexible input amount that allows for partial deposits and variable amounts.
      */
     swapType: QuoteRequest.swapType;
     /**
@@ -90,10 +91,12 @@ export namespace QuoteRequest {
      * Whether to use the amount as the output or the input for the basis of the swap:
      * - `EXACT_INPUT` - request output amount for exact input.
      * - `EXACT_OUTPUT` - request output amount for exact output. The `refundTo` address will always receive excess tokens back even after the swap is complete.
+     * - `FLEX_INPUT` - flexible input amount that allows for partial deposits and variable amounts.
      */
     export enum swapType {
         EXACT_INPUT = 'EXACT_INPUT',
         EXACT_OUTPUT = 'EXACT_OUTPUT',
+        FLEX_INPUT = 'FLEX_INPUT',
     }
     /**
      * Type of the deposit address:
