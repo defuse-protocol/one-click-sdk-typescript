@@ -55,6 +55,7 @@ export namespace TokenResponse {
         SUI = 'sui',
         OP = 'op',
         AVAX = 'avax',
+        CARDANO = 'cardano',
     }
 }
 
