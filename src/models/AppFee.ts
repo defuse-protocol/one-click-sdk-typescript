@@ -4,7 +4,7 @@
 /* eslint-disable */
 export type AppFee = {
     /**
-     * Intents Account ID where this fee will be transferred to
+     * Account ID within Intents to which this fee will be transferred
      */
     recipient: string;
     /**

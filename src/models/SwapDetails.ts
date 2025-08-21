@@ -9,15 +9,15 @@ export type SwapDetails = {
      */
     intentHashes: Array<string>;
     /**
-     * All Near transactions executed for this swap
+     * All NEAR transactions executed for this swap
      */
     nearTxHashes: Array<string>;
     /**
-     * Exact amount of `originToken` after trade was settled
+     * Exact amount of `originToken` after the trade was settled
      */
     amountIn?: string;
     /**
-     * Exact amount of `originToken` after trade was settled in readable format
+     * Exact amount of `originToken` in readable format after the trade was settled
      */
     amountInFormatted?: string;
     /**
@@ -25,11 +25,11 @@ export type SwapDetails = {
      */
     amountInUsd?: string;
     /**
-     * Exact amount of `destinationToken` after trade was settled
+     * Exact amount of `destinationToken` after the trade was settled
      */
     amountOut?: string;
     /**
-     * Exact amount of `destinationToken` in readable format
+     * Exact amount of `destinationToken` in readable format after the trade was settled
      */
     amountOutFormatted?: string;
     /**
@@ -49,7 +49,7 @@ export type SwapDetails = {
      */
     destinationChainTxHashes: Array<TransactionDetails>;
     /**
-     * Amount of `originAsset` that got transferred to `refundTo`
+     * Amount of `originAsset` transferred to `refundTo`
      */
     refundedAmount?: string;
     /**

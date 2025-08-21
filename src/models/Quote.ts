@@ -4,11 +4,15 @@
 /* eslint-disable */
 export type Quote = {
     /**
-     * The deposit address on the chain of `originAsset` in case if `depositType` is `ORIGIN_CHAIN`.
+     * The deposit address on the chain of `originAsset` when `depositType` is `ORIGIN_CHAIN`.
      *
-     * The deposit address inside of near intents (the verifier smart contract) in case if `depositType` is `INTENTS`.
+     * The deposit address inside NEAR Intents (the verifier smart contract) when `depositType` is `INTENTS`.
      */
     depositAddress?: string;
+    /**
+     * Some of the deposit addresses **REQUIRE** to also include the `memo` for the deposit to be processed
+     */
+    depositMemo?: string;
     /**
      * Amount of the origin asset
      */
@@ -22,7 +26,7 @@ export type Quote = {
      */
     amountInUsd: string;
     /**
-     * Minimum amount of the origin asset that will be used for swap
+     * Minimum amount of the origin asset that will be used for the swap
      */
     minAmountIn: string;
     /**
@@ -38,19 +42,19 @@ export type Quote = {
      */
     amountOutUsd: string;
     /**
-     * Minimum amount with slippage taken into account
+     * Minimum output amount after slippage is applied
      */
     minAmountOut: string;
     /**
-     * Time when the deposit address will become inactive and funds might be lost
+     * Time when the deposit address becomes inactive and funds may be lost
      */
     deadline?: string;
     /**
-     * Time when the deposit address will become cold and swap processing will take more time
+     * Time when the deposit address becomes cold, causing swap processing to take longer
      */
     timeWhenInactive?: string;
     /**
-     * Estimated time in seconds for swap to be executed after the deposit transaction is confirmed
+     * Estimated time in seconds for the swap to be executed after the deposit transaction is confirmed
      */
     timeEstimate: number;
     /**

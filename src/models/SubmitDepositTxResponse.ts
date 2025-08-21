@@ -6,7 +6,7 @@ import type { QuoteResponse } from './QuoteResponse';
 import type { SwapDetails } from './SwapDetails';
 export type SubmitDepositTxResponse = {
     /**
-     * Quote response from original request
+     * Quote response from the original request
      */
     quoteResponse: QuoteResponse;
     status: SubmitDepositTxResponse.status;

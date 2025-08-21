@@ -6,7 +6,7 @@ import type { Quote } from './Quote';
 import type { QuoteRequest } from './QuoteRequest';
 export type QuoteResponse = {
     /**
-     * Timestamp in ISO format that took part in the deposit address derivation
+     * Timestamp in ISO format that was used to derive the deposit address
      */
     timestamp: string;
     /**
@@ -18,7 +18,7 @@ export type QuoteResponse = {
      */
     quoteRequest: QuoteRequest;
     /**
-     * Response that contains the deposit address to send "amount" of `originAsset` and possible output amount.
+     * Response containing the deposit address for sending the `amount` of `originAsset` and the expected output amount.
      */
     quote: Quote;
 };

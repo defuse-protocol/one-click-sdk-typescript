@@ -13,10 +13,16 @@ export type QuoteRequest = {
      */
     dry: boolean;
     /**
-     * Whether to use the amount as the output or the input for the basis of the swap:
-     * - `EXACT_INPUT` - request output amount for exact input.
-     * - `EXACT_OUTPUT` - request output amount for exact output. The `refundTo` address will always receive excess tokens back even after the swap is complete.
-     * - `FLEX_INPUT` - flexible input amount that allows for partial deposits and variable amounts.
+     * What deposit address mode you will get in the response, most chain supports only `SIMPLE` and some(for example `stellar`) only `MEMO`:
+     * - `SIMPLE` - usual deposit with only deposit address.
+     * - `MEMO` - some chains will **REQUIRE** the `memo` together with `depositAddress` for swap to work.
+     */
+    depositMode?: QuoteRequest.depositMode;
+    /**
+     * How to interpret `amount` when performing the swap:
+     * - `EXACT_INPUT` - requests the output amount for an exact input.
+     * - `EXACT_OUTPUT` - requests the input amount for an exact output. The `refundTo` address always receives any excess tokens after the swap is complete.
+     * - `FLEX_INPUT` - a flexible input amount that allows for partial deposits and variable amounts.
      */
     swapType: QuoteRequest.swapType;
     /**
@@ -28,9 +34,9 @@ export type QuoteRequest = {
      */
     originAsset: string;
     /**
-     * Type of the deposit address:
-     * - `ORIGIN_CHAIN` - deposit address on the origin chain
-     * - `INTENTS` - **account ID** inside near intents to which you should transfer assets inside intents.
+     * Type of deposit address:
+     * - `ORIGIN_CHAIN` - deposit address on the origin chain.
+     * - `INTENTS` - the account ID within NEAR Intents to which you should transfer assets.
      */
     depositType: QuoteRequest.depositType;
     /**
@@ -38,21 +44,21 @@ export type QuoteRequest = {
      */
     destinationAsset: string;
     /**
-     * Amount to swap as the base amount (can be switched to exact input/output using the dedicated flag), denoted in the smallest unit of the specified currency (e.g., wei for ETH).
+     * Amount to swap as the base amount. It is interpreted as the input or output amount based on the `swapType` flag and is specified in the smallest unit of the currency (e.g., wei for ETH).
      */
     amount: string;
     /**
-     * Address for user refund.
+     * Address used for refunds.
      */
     refundTo: string;
     /**
      * Type of refund address:
-     * - `ORIGIN_CHAIN` - assets will be refunded to `refundTo` address on the origin chain
-     * - `INTENTS` - assets will be refunded to `refundTo` intents account
+     * - `ORIGIN_CHAIN` - assets are refunded to the `refundTo` address on the origin chain.
+     * - `INTENTS` - assets are refunded to the `refundTo` Intents account.
      */
     refundType: QuoteRequest.refundType;
     /**
-     * Recipient address. The format should match `recipientType`.
+     * Recipient address. The format must match `recipientType`.
      */
     recipient: string;
     /**
@@ -65,20 +71,20 @@ export type QuoteRequest = {
     virtualChainRefundRecipient?: string;
     /**
      * Type of recipient address:
-     * - `DESTINATION_CHAIN` - assets will be transferred to chain of `destinationAsset`
-     * - `INTENTS` - assets will be transferred to account inside intents
+     * - `DESTINATION_CHAIN` - assets are transferred to the chain of `destinationAsset`.
+     * - `INTENTS` - assets are transferred to an account inside Intents
      */
     recipientType: QuoteRequest.recipientType;
     /**
-     * Timestamp in ISO format, that identifies when user refund will begin if the swap isn't completed by then. It needs to exceed the time required for the deposit tx to be minted, e.g. for Bitcoin it might require ~1h depending on the gas fees paid.
+     * Timestamp in ISO format that identifies when the user refund begins if the swap isn't completed by then. It must exceed the time required for the deposit transaction to be mined. For example, Bitcoin may require around one hour depending on the fees paid.
      */
     deadline: string;
     /**
-     * Referral identifier(lower case only). It will be reflected in the on-chain data and displayed on public analytics platforms.
+     * Referral identifier (lowercase only). It will be reflected in the on-chain data and displayed on public analytics platforms.
      */
     referral?: string;
     /**
-     * Time in milliseconds user is willing to wait for quote from relay.
+     * Time in milliseconds the user is willing to wait for a quote from the relay.
      */
     quoteWaitingTimeMs?: number;
     /**
@@ -88,10 +94,19 @@ export type QuoteRequest = {
 };
 export namespace QuoteRequest {
     /**
-     * Whether to use the amount as the output or the input for the basis of the swap:
-     * - `EXACT_INPUT` - request output amount for exact input.
-     * - `EXACT_OUTPUT` - request output amount for exact output. The `refundTo` address will always receive excess tokens back even after the swap is complete.
-     * - `FLEX_INPUT` - flexible input amount that allows for partial deposits and variable amounts.
+     * What deposit address mode you will get in the response, most chain supports only `SIMPLE` and some(for example `stellar`) only `MEMO`:
+     * - `SIMPLE` - usual deposit with only deposit address.
+     * - `MEMO` - some chains will **REQUIRE** the `memo` together with `depositAddress` for swap to work.
+     */
+    export enum depositMode {
+        SIMPLE = 'SIMPLE',
+        MEMO = 'MEMO',
+    }
+    /**
+     * How to interpret `amount` when performing the swap:
+     * - `EXACT_INPUT` - requests the output amount for an exact input.
+     * - `EXACT_OUTPUT` - requests the input amount for an exact output. The `refundTo` address always receives any excess tokens after the swap is complete.
+     * - `FLEX_INPUT` - a flexible input amount that allows for partial deposits and variable amounts.
      */
     export enum swapType {
         EXACT_INPUT = 'EXACT_INPUT',
@@ -99,9 +114,9 @@ export namespace QuoteRequest {
         FLEX_INPUT = 'FLEX_INPUT',
     }
     /**
-     * Type of the deposit address:
-     * - `ORIGIN_CHAIN` - deposit address on the origin chain
-     * - `INTENTS` - **account ID** inside near intents to which you should transfer assets inside intents.
+     * Type of deposit address:
+     * - `ORIGIN_CHAIN` - deposit address on the origin chain.
+     * - `INTENTS` - the account ID within NEAR Intents to which you should transfer assets.
      */
     export enum depositType {
         ORIGIN_CHAIN = 'ORIGIN_CHAIN',
@@ -109,8 +124,8 @@ export namespace QuoteRequest {
     }
     /**
      * Type of refund address:
-     * - `ORIGIN_CHAIN` - assets will be refunded to `refundTo` address on the origin chain
-     * - `INTENTS` - assets will be refunded to `refundTo` intents account
+     * - `ORIGIN_CHAIN` - assets are refunded to the `refundTo` address on the origin chain.
+     * - `INTENTS` - assets are refunded to the `refundTo` Intents account.
      */
     export enum refundType {
         ORIGIN_CHAIN = 'ORIGIN_CHAIN',
@@ -118,8 +133,8 @@ export namespace QuoteRequest {
     }
     /**
      * Type of recipient address:
-     * - `DESTINATION_CHAIN` - assets will be transferred to chain of `destinationAsset`
-     * - `INTENTS` - assets will be transferred to account inside intents
+     * - `DESTINATION_CHAIN` - assets are transferred to the chain of `destinationAsset`.
+     * - `INTENTS` - assets are transferred to an account inside Intents
      */
     export enum recipientType {
         DESTINATION_CHAIN = 'DESTINATION_CHAIN',
