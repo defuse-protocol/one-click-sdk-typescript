@@ -55,21 +55,24 @@ export class OneClickService {
     }
     /**
      * Check swap execution status
-     * Retrieves the current status of a swap using the unique deposit address from the quote.
+     * Retrieves the current status of a swap using the unique deposit address from the quote, if quote response included deposit memo, it is required as well.
      *
      * The response includes the state of the swap (e.g., pending, processing, success, refunded) and any associated swap and transaction details.
      * @param depositAddress
+     * @param depositMemo
      * @returns GetExecutionStatusResponse
      * @throws ApiError
      */
     public static getExecutionStatus(
         depositAddress: string,
+        depositMemo?: string,
     ): CancelablePromise<GetExecutionStatusResponse> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/v0/status',
             query: {
                 'depositAddress': depositAddress,
+                'depositMemo': depositMemo,
             },
             errors: {
                 401: `Unauthorized - JWT token is invalid`,
