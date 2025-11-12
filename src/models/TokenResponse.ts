@@ -56,6 +56,8 @@ export namespace TokenResponse {
         OP = 'op',
         AVAX = 'avax',
         CARDANO = 'cardano',
+        LTC = 'ltc',
+        XLAYER = 'xlayer',
     }
 }
 

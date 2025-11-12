@@ -65,5 +65,13 @@ export type Quote = {
      * EVM address of a refund recipient in a virtual chain
      */
     virtualChainRefundRecipient?: string;
+    /**
+     * **HIGHLY EXPERIMENTAL** Message passed to `ft_transfer_call` when withdrawing assets to NEAR.
+     *
+     * Otherwise, `ft_transfer` will be used.
+     *
+     * **WARNING**: Funds will be lost if used with non NEP-141 tokens, in case of insufficient `storage_deposit` or if the recipient does not implement `ft_on_transfer` method.
+     */
+    customRecipientMsg?: string;
 };
 

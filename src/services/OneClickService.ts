@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { GetAnyInputQuoteWithdrawals } from '../models/GetAnyInputQuoteWithdrawals';
 import type { GetExecutionStatusResponse } from '../models/GetExecutionStatusResponse';
 import type { QuoteRequest } from '../models/QuoteRequest';
 import type { QuoteResponse } from '../models/QuoteResponse';
@@ -73,6 +74,43 @@ export class OneClickService {
             query: {
                 'depositAddress': depositAddress,
                 'depositMemo': depositMemo,
+            },
+            errors: {
+                401: `Unauthorized - JWT token is invalid`,
+                404: `Deposit address not found`,
+            },
+        });
+    }
+    /**
+     * Get ANY_INPUT withdrawals
+     * Retrieves all withdrawals by ANY_INPUT quote with filtering, pagination and sorting
+     * @param depositAddress
+     * @param depositMemo
+     * @param timestampFrom Filter withdrawals from this timestamp (ISO string)
+     * @param page Page number for pagination (default: 1)
+     * @param limit Number of withdrawals per page (max: 50, default: 50)
+     * @param sortOrder Sort order
+     * @returns GetAnyInputQuoteWithdrawals
+     * @throws ApiError
+     */
+    public static getAnyInputQuoteWithdrawals(
+        depositAddress: string,
+        depositMemo?: string,
+        timestampFrom?: string,
+        page?: number,
+        limit?: number,
+        sortOrder?: 'asc' | 'desc',
+    ): CancelablePromise<GetAnyInputQuoteWithdrawals> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/v0/any-input/withdrawals',
+            query: {
+                'depositAddress': depositAddress,
+                'depositMemo': depositMemo,
+                'timestampFrom': timestampFrom,
+                'page': page,
+                'limit': limit,
+                'sortOrder': sortOrder,
             },
             errors: {
                 401: `Unauthorized - JWT token is invalid`,

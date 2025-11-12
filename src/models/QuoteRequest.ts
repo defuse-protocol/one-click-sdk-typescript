@@ -19,10 +19,22 @@ export type QuoteRequest = {
      */
     depositMode?: QuoteRequest.depositMode;
     /**
-     * How to interpret `amount` when performing the swap:
-     * - `EXACT_INPUT` - requests the output amount for an exact input.
-     * - `EXACT_OUTPUT` - requests the input amount for an exact output. The `refundTo` address always receives any excess tokens after the swap is complete.
-     * - `FLEX_INPUT` - a flexible input amount that allows for partial deposits and variable amounts.
+     * How to interpret `amount` (and refunds) when performing the swap:
+     *
+     * - `EXACT_INPUT` — requests the output amount for an exact input.
+     * - If deposit is less than `amountIn`, the deposit is refunded by deadline.
+     * - If deposit is above than `amountIn`, the swap is processed and the excess is refunded to `refundTo` address after swap is complete.
+     *
+     * - `EXACT_OUTPUT` — requests the input amount for an exact output.
+     * - The quote response would have two fields `minAmountIn` and `maxAmountIn`.
+     * - If the input is above than `maxAmountIn` the swap is processed and the excess is refunded to `refundTo` address after swap is complete.
+     * - If the input is less than  `minAmountIn`, the deposit is refunded by deadline.
+     *
+     * - `FLEX_INPUT` — a flexible input amount that allows for partial deposits and variable amounts.
+     * - `slippage` applies both to `amountOut` and `amountIn` and defines an acceptable range (`minAmountIn` and `minAmountOut`).
+     * - Any amount higher than `minAmountIn` is accepted and converted to the output asset as long as `minAmountOut` is met.
+     * - The `amountIn` can be less, as long as the 'slippage + 1%' constraint is met. If the total received by the deadline is below the lower bound, the deposit is refunded.
+     * - If deposits exceed the upper bound, the swap is still processed
      */
     swapType: QuoteRequest.swapType;
     /**
@@ -62,6 +74,14 @@ export type QuoteRequest = {
      */
     recipient: string;
     /**
+     * Addresses of connected wallets.
+     */
+    connectedWallets?: Array<string>;
+    /**
+     * Unique client session identifier for 1Click.
+     */
+    sessionId?: string;
+    /**
      * EVM address of a transfer recipient in a virtual chain
      */
     virtualChainRecipient?: string;
@@ -69,6 +89,14 @@ export type QuoteRequest = {
      * EVM address of a refund recipient in a virtual chain
      */
     virtualChainRefundRecipient?: string;
+    /**
+     * **HIGHLY EXPERIMENTAL** Message to pass to `ft_transfer_call` when withdrawing assets to NEAR.
+     *
+     * Otherwise, `ft_transfer` will be used.
+     *
+     * **WARNING**: Funds will be lost if used with non NEP-141 tokens, in case of insufficient `storage_deposit` or if the recipient does not implement `ft_on_transfer` method.
+     */
+    customRecipientMsg?: string;
     /**
      * Type of recipient address:
      * - `DESTINATION_CHAIN` - assets are transferred to the chain of `destinationAsset`.
@@ -85,6 +113,7 @@ export type QuoteRequest = {
     referral?: string;
     /**
      * Time in milliseconds the user is willing to wait for a quote from the relay.
+     * **If you want to receive the fastest quote - use `0` as a value**
      */
     quoteWaitingTimeMs?: number;
     /**
@@ -103,15 +132,28 @@ export namespace QuoteRequest {
         MEMO = 'MEMO',
     }
     /**
-     * How to interpret `amount` when performing the swap:
-     * - `EXACT_INPUT` - requests the output amount for an exact input.
-     * - `EXACT_OUTPUT` - requests the input amount for an exact output. The `refundTo` address always receives any excess tokens after the swap is complete.
-     * - `FLEX_INPUT` - a flexible input amount that allows for partial deposits and variable amounts.
+     * How to interpret `amount` (and refunds) when performing the swap:
+     *
+     * - `EXACT_INPUT` — requests the output amount for an exact input.
+     * - If deposit is less than `amountIn`, the deposit is refunded by deadline.
+     * - If deposit is above than `amountIn`, the swap is processed and the excess is refunded to `refundTo` address after swap is complete.
+     *
+     * - `EXACT_OUTPUT` — requests the input amount for an exact output.
+     * - The quote response would have two fields `minAmountIn` and `maxAmountIn`.
+     * - If the input is above than `maxAmountIn` the swap is processed and the excess is refunded to `refundTo` address after swap is complete.
+     * - If the input is less than  `minAmountIn`, the deposit is refunded by deadline.
+     *
+     * - `FLEX_INPUT` — a flexible input amount that allows for partial deposits and variable amounts.
+     * - `slippage` applies both to `amountOut` and `amountIn` and defines an acceptable range (`minAmountIn` and `minAmountOut`).
+     * - Any amount higher than `minAmountIn` is accepted and converted to the output asset as long as `minAmountOut` is met.
+     * - The `amountIn` can be less, as long as the 'slippage + 1%' constraint is met. If the total received by the deadline is below the lower bound, the deposit is refunded.
+     * - If deposits exceed the upper bound, the swap is still processed
      */
     export enum swapType {
         EXACT_INPUT = 'EXACT_INPUT',
         EXACT_OUTPUT = 'EXACT_OUTPUT',
         FLEX_INPUT = 'FLEX_INPUT',
+        ANY_INPUT = 'ANY_INPUT',
     }
     /**
      * Type of deposit address:

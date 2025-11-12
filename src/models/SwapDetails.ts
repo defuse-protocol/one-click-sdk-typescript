@@ -60,5 +60,9 @@ export type SwapDetails = {
      * Refunded amount equivalent in USD
      */
     refundedAmountUsd?: string;
+    /**
+     * Referral identifier
+     */
+    referral?: string;
 };
 

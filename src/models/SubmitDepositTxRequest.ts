@@ -11,5 +11,13 @@ export type SubmitDepositTxRequest = {
      * Deposit address for the quote
      */
     depositAddress: string;
+    /**
+     * Sender account (used only for NEAR blockchain)
+     */
+    nearSenderAccount?: string;
+    /**
+     * Memo (use if deposit was submitted with one)
+     */
+    memo?: string;
 };
 
