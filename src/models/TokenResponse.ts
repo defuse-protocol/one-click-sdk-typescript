@@ -58,6 +58,7 @@ export namespace TokenResponse {
         CARDANO = 'cardano',
         LTC = 'ltc',
         XLAYER = 'xlayer',
+        MONAD = 'monad',
     }
 }
 

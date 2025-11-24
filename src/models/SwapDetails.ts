@@ -61,6 +61,18 @@ export type SwapDetails = {
      */
     refundedAmountUsd?: string;
     /**
+     * Amount deposited to `depositAddress` onchain
+     */
+    depositedAmount?: string;
+    /**
+     * Amount deposited in readable format
+     */
+    depositedAmountFormatted?: string;
+    /**
+     * Amount deposited equivalent in USD
+     */
+    depositedAmountUsd?: string;
+    /**
      * Referral identifier
      */
     referral?: string;
