@@ -6,6 +6,10 @@ import type { QuoteResponse } from './QuoteResponse';
 import type { SwapDetails } from './SwapDetails';
 export type SubmitDepositTxResponse = {
     /**
+     * Unique identifier for request tracing and debugging
+     */
+    correlationId: string;
+    /**
      * Quote response from the original request
      */
     quoteResponse: QuoteResponse;

@@ -61,6 +61,10 @@ export type SwapDetails = {
      */
     refundedAmountUsd?: string;
     /**
+     * Reason for refund
+     */
+    refundReason?: string;
+    /**
      * Amount deposited to `depositAddress` onchain
      */
     depositedAmount?: string;

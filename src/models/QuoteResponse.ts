@@ -6,6 +6,10 @@ import type { Quote } from './Quote';
 import type { QuoteRequest } from './QuoteRequest';
 export type QuoteResponse = {
     /**
+     * Unique identifier for request tracing and debugging
+     */
+    correlationId: string;
+    /**
      * Timestamp in ISO format that was used to derive the deposit address
      */
     timestamp: string;

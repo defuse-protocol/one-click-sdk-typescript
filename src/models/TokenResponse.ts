@@ -59,6 +59,9 @@ export namespace TokenResponse {
         LTC = 'ltc',
         XLAYER = 'xlayer',
         MONAD = 'monad',
+        BCH = 'bch',
+        ADI = 'adi',
+        STARKNET = 'starknet',
     }
 }
 
