@@ -1,15 +1,30 @@
-import ecc from 'tiny-secp256k1'
-import { BIP32Factory } from 'bip32'
-import { keccak_256 } from '@noble/hashes/sha3';
-import { sha256 } from '@noble/hashes/sha2'
-import { bytesToHex, hexToBytes } from '@noble/hashes/utils';
+import * as secp from "@noble/secp256k1";
 import { QuoteResponse } from "../models/QuoteResponse";
-import { QuoteRequest } from '../models/QuoteRequest';
-import { encodeFunctionData, parseAbi } from 'viem'
+import { QuoteRequest } from "../models/QuoteRequest";
+import { concat, encodeFunctionData, Hex, hexToBytes, parseAbi, sha256, toHex } from "viem";
+import { Address, HDKey, publicKeyToAddress } from "viem/accounts";
+import { TokenResponse } from "../models/TokenResponse";
 
-type Hex = `0x${string}`;
+const CHAIN_ID_MAP = {
+    eth: 1,
+    base: 8453,
+    arb: 42161,
+    gnosis: 100,
+    bera: 80084,
+    bsc: 56,
+    pol: 137,
+    op: 10,
+    avax: 43114,
+    xlayer: 196,
+};
 
-export const validateQuoteDepositAddress = (teePublicKey: Hex, teeChainCode: Hex, { quote, quoteRequest }: QuoteResponse) => {
+export const validateQuoteDepositAddress = (
+    teePublicKey: Hex,
+    teeChainCode: Hex,
+    quoteResponse: QuoteResponse
+) => {
+    const { quote, quoteRequest } = quoteResponse;
+
     if (quoteRequest.dry) {
         return;
     }
@@ -20,105 +35,96 @@ export const validateQuoteDepositAddress = (teePublicKey: Hex, teeChainCode: Hex
 
     const allowedSwapTypes = [
         QuoteRequest.swapType.EXACT_INPUT,
-        QuoteRequest.swapType.EXACT_OUTPUT
+        QuoteRequest.swapType.EXACT_OUTPUT,
     ];
 
     if (!allowedSwapTypes.includes(quoteRequest.swapType)) {
         return;
     }
 
-    const treasuryContract = '0x...'; // TODO
-    // FIXME: adapt amount to asset decimals
+    const { chain, address: assetAddress } = getAssetDetails(quoteRequest.originAsset);
+
+    const allowedBlockchains = Object.values(TokenResponse.blockchain);
+    if (!allowedBlockchains.includes(chain)) {
+        return;
+    }
+
+    // FIXME: put 0x2CfF890f0378a11913B6129B2E97417a2c302680
+    const treasury = "0xCEf67989ae740cC9c92fa7385F003F84EAAFd915";
+    const amount = BigInt(quote.amountIn);
+
     const calldata = encodeFunctionData({
-        abi: parseAbi(['function transfer(address to, uint256 amount) returns (bool)']),
-        functionName: 'transfer',
-        args: [treasuryContract, quote.amountIn]
+        abi: parseAbi(["function transfer(address, uint256)"]),
+        functionName: "transfer",
+        args: [treasury, amount],
     });
 
     // FIXME: value is zero here => support also native assets (ie ETH)
-    const value = '0';
-    const chainId = getChainIdFromAsset(quoteRequest.originAsset);
-    const to = getAddressFromAsset(quoteRequest.originAsset);
-    const commitmentParams = [chainId, to, value, calldata];
+    const value = "0";
+    const chainId = CHAIN_ID_MAP[chain as keyof typeof CHAIN_ID_MAP].toString();
+    const commitmentParams = [chainId, assetAddress, value, calldata];
     const commitmentHashHex = getCommitmentHash(commitmentParams);
 
-    const bip32 = BIP32Factory(ecc);
     const deterministicPath = hexToBip32Path(commitmentHashHex);
     const publicKeyBytes = hexToBytes(teePublicKey);
     const chainCodeBytes = hexToBytes(teeChainCode);
-    const parent = bip32.fromPublicKey(publicKeyBytes, chainCodeBytes);
-    const child = parent.derivePath('m/' + deterministicPath);
+    const hd = new HDKey({
+        publicKey: publicKeyBytes,
+        chainCode: chainCodeBytes,
+    });
 
-    const address = getChildAddress(child);
+    const child = hd.derive("m/" + deterministicPath);
+    const point = secp.Point.fromBytes(child.publicKey as secp.Bytes);
+    const uncompressed = concat(["0x04", toHex(point.x), toHex(point.y)]);
+    const address = publicKeyToAddress(uncompressed);
 
     if (address !== quote.depositAddress) {
-        throw new Error(`Deposit address ${quote.depositAddress} is invalid, expected address ${address}`);
+        throw new Error(
+            `Deposit address ${quote.depositAddress} is invalid, expected address ${address}`
+        );
     }
-}
+};
 
-function getAddressFromAsset(originAsset: string) {
-    // TODO
-    return '0x63706e401c06ac8513145b7687A14804d17f814b'; // AAVE on base
-}
-
-const hexToBip32Path = (hexString: Hex) => {
+const hexToBip32Path = (hexString: Hex): string => {
     const cleanHex = hexString.slice(2);
     if (cleanHex.length !== 64) {
         throw new Error(`Expected 64 hex characters (32 bytes), got ${cleanHex.length}`);
     }
 
     if (!/^[0-9a-fA-F]+$/.test(cleanHex)) {
-        throw new Error('Invalid hex string: contains non-hexadecimal characters');
+        throw new Error("Invalid hex string: contains non-hexadecimal characters");
     }
 
     const path = [];
-    const nonHardenedLimit = 2 ** 31 - 1
+    const nonHardenedLimit = 2 ** 31 - 1;
     for (let i = 0; i < 64; i += 8) {
         const chunk = cleanHex.slice(i, i + 8);
         const value = parseInt(chunk, 16) % nonHardenedLimit;
         path.push(value.toString());
     }
-    return path.join('/');
-}
-
-const publicKeyToAddress = (uncompressedPublicKey: Hex): Hex => {
-    const pubKey = uncompressedPublicKey.startsWith('0x')
-        ? uncompressedPublicKey.slice(2)
-        : uncompressedPublicKey;
-
-    if (pubKey.length !== 130) {
-        throw new Error(`Expected 130 hex characters for uncompressed public key, got ${pubKey.length}`);
-    }
-
-    const pubKeyBytes = hexToBytes(pubKey.slice(2));
-    const hash = keccak_256(pubKeyBytes);
-    const hashHex = bytesToHex(hash);
-
-    return `0x${hashHex.slice(-40)}` as Hex;
-}
-
-
-const getChildAddress = (child) => {
-    const uncompressedPublicKey = Buffer.from(ecc.pointCompress(child.publicKey, false)).toString('hex')
-    return ethers.computeAddress(`0x${uncompressedPublicKey}`)
-}
+    return path.join("/");
+};
 
 const getCommitmentHash = (commitmentParams: Array<string>): Hex => {
-    const hash = sha256.create();
     const encoder = new TextEncoder();
-    for (const str of commitmentParams) {
-        hash.update(encoder.encode(str))
-    }
-    return `0x${bytesToHex(hash.digest())}`;
-}
+    const combinedBytes: Array<number> = [];
+    commitmentParams.map((str) => {
+        combinedBytes.push(...encoder.encode(str));
+    });
+    const combined = Uint8Array.from(combinedBytes);
+    return sha256(combined, "hex");
+};
 
-const getChainIdFromAsset = (asset: string) => {
-    // TODO:
-    return '8453';
+function getAssetDetails(originAsset: string): {
+    chain: TokenResponse.blockchain;
+    address: Address;
+} {
+    const [, chainAndAddress] = originAsset.split(":");
+    let [chain, address] = chainAndAddress.split("-");
+    address = address.replace(".omft.near", "");
+    address = address.replace(".stft.near", "");
+    return {
+        chain: chain as TokenResponse.blockchain,
+        address: address as Address,
+    };
 }
-
-const data = encodeFunctionData({
-    abi: parseAbi(['function mint(uint256 amount)']),
-    functionName: 'mint',
-    args: [100n]
-})
