@@ -3,7 +3,8 @@
 	"version": "0.1.2",
 	"private": true,
 	"scripts": {
-		"start:swap": "ts-node basic-swap-flow.ts"
+		"start:swap": "ts-node basic-swap-flow.ts",
+		"start:validate": "ts-node validate.ts"
 	},
 	"dependencies": {
 		"@defuse-protocol/one-click-sdk-typescript": "0.1.1"
