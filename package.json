@@ -55,11 +55,9 @@
     "typescript": "^5.4.2"
   },
   "dependencies": {
-    "@noble/hashes": "^2.0.1",
+    "@noble/secp256k1": "^3.0.0",
     "axios": "^1.6.8",
-    "bip32": "^5.0.0",
     "form-data": "^4.0.0",
-    "tiny-secp256k1": "^2.2.4",
     "viem": "^2.41.2"
   },
   "packageManager": "pnpm@8.15.4",
