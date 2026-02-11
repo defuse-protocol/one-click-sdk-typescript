@@ -61,7 +61,9 @@ export namespace TokenResponse {
         MONAD = 'monad',
         BCH = 'bch',
         ADI = 'adi',
+        PLASMA = 'plasma',
         STARKNET = 'starknet',
+        ALEO = 'aleo',
     }
 }
 
