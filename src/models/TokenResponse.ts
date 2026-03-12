@@ -44,6 +44,7 @@ export namespace TokenResponse {
         BTC = 'btc',
         SOL = 'sol',
         TON = 'ton',
+        DASH = 'dash',
         DOGE = 'doge',
         XRP = 'xrp',
         ZEC = 'zec',
@@ -62,6 +63,7 @@ export namespace TokenResponse {
         BCH = 'bch',
         ADI = 'adi',
         PLASMA = 'plasma',
+        SCROLL = 'scroll',
         STARKNET = 'starknet',
         ALEO = 'aleo',
     }

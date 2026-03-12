@@ -73,5 +73,9 @@ export type Quote = {
      * **WARNING**: Funds will be lost if used with non NEP-141 tokens, in case of insufficient `storage_deposit` or if the recipient does not implement `ft_on_transfer` method.
      */
     customRecipientMsg?: string;
+    /**
+     * Fee charged for refunding assets to the refund address in the smallest unit of the origin asset
+     */
+    refundFee?: string;
 };
 
