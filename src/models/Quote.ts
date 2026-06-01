@@ -10,7 +10,7 @@ export type Quote = {
      */
     depositAddress?: string;
     /**
-     * Some of the deposit addresses **REQUIRE** to also include the `memo` for the deposit to be processed
+     * Some deposit addresses **REQUIRE** a `memo` together with `depositAddress` for the deposit to be processed. This field is deposit-side metadata.
      */
     depositMemo?: string;
     /**
@@ -77,5 +77,9 @@ export type Quote = {
      * Fee charged for refunding assets to the refund address in the smallest unit of the origin asset
      */
     refundFee?: string;
+    /**
+     * Fee charged for withdrawing assets to the recipient in the smallest unit of the destination asset. This fee is already accounted for in the final amountOut result
+     */
+    withdrawFee?: string;
 };
 

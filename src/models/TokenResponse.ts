@@ -56,6 +56,8 @@ export namespace TokenResponse {
         SUI = 'sui',
         OP = 'op',
         AVAX = 'avax',
+        STELLAR = 'stellar',
+        APTOS = 'aptos',
         CARDANO = 'cardano',
         LTC = 'ltc',
         XLAYER = 'xlayer',
@@ -66,6 +68,7 @@ export namespace TokenResponse {
         SCROLL = 'scroll',
         STARKNET = 'starknet',
         ALEO = 'aleo',
+        HYPERCORE = 'hypercore',
     }
 }
 

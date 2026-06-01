@@ -77,6 +77,10 @@ export type SwapDetails = {
      */
     depositedAmountUsd?: string;
     /**
+     * Fee charged for withdrawing assets to the recipient in the smallest unit of the destination asset. This fee is already accounted for in the final amountOut result
+     */
+    withdrawFee?: string;
+    /**
      * Referral identifier
      */
     referral?: string;

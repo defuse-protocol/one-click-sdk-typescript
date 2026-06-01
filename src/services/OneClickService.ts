@@ -50,7 +50,7 @@ export class OneClickService {
             mediaType: 'application/json',
             errors: {
                 400: `Bad Request - Invalid input data`,
-                401: `Unauthorized - JWT token is invalid`,
+                401: `Unauthorized - API key or JWT token is invalid`,
             },
         });
     }
@@ -76,7 +76,7 @@ export class OneClickService {
                 'depositMemo': depositMemo,
             },
             errors: {
-                401: `Unauthorized - JWT token is invalid`,
+                401: `Unauthorized - API key or JWT token is invalid`,
                 404: `Deposit address not found`,
             },
         });
@@ -113,7 +113,7 @@ export class OneClickService {
                 'sortOrder': sortOrder,
             },
             errors: {
-                401: `Unauthorized - JWT token is invalid`,
+                401: `Unauthorized - API key or JWT token is invalid`,
                 404: `Deposit address not found`,
             },
         });
@@ -137,7 +137,7 @@ export class OneClickService {
             mediaType: 'application/json',
             errors: {
                 400: `Bad Request - Invalid input data`,
-                401: `Unauthorized - JWT token is invalid`,
+                401: `Unauthorized - API key or JWT token is invalid`,
             },
         });
     }

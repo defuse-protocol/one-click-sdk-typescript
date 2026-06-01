@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { AppFee } from './AppFee';
+import type { Rebate } from './Rebate';
 export type QuoteRequest = {
     /**
      * Flag indicating whether this is a dry run request.
@@ -16,6 +17,8 @@ export type QuoteRequest = {
      * What deposit address mode you will get in the response, most chain supports only `SIMPLE` and some(for example `stellar`) only `MEMO`:
      * - `SIMPLE` - usual deposit with only deposit address.
      * - `MEMO` - some chains will **REQUIRE** the `memo` together with `depositAddress` for swap to work.
+     *
+     * `depositMode` applies only to deposit transaction metadata.
      */
     depositMode?: QuoteRequest.depositMode;
     /**
@@ -26,14 +29,16 @@ export type QuoteRequest = {
      * - If deposit is above than `amountIn`, the swap is processed and the excess is refunded to `refundTo` address after swap is complete.
      *
      * - `EXACT_OUTPUT` — requests the input amount for an exact output.
-     * - The quote response would have two fields `minAmountIn` and `maxAmountIn`.
-     * - If the input is above than `maxAmountIn` the swap is processed and the excess is refunded to `refundTo` address after swap is complete.
-     * - If the input is less than  `minAmountIn`, the deposit is refunded by deadline.
+     * - The output amount (`amountOut`) is fixed; slippage is applied to the **input** side.
+     * - The quote response includes `amountIn` (the proposed input with slippage tolerance baked in) and `minAmountIn` (the minimum input required).
+     * - **Important**: `amountIn` will appear higher than `minAmountIn` by approximately your `slippageTolerance`. This is **not** price degradation—it is a buffer to ensure successful execution. Any input amount above what is actually needed for the swap is **refunded** to your `refundTo` address after the swap completes.
+     * - If the deposit is above `amountIn`, the swap is processed and the excess is refunded to `refundTo` address after swap is complete.
+     * - If the deposit is less than `minAmountIn`, the deposit is refunded by deadline.
      *
      * - `FLEX_INPUT` — a flexible input amount that allows for partial deposits and variable amounts.
      * - `slippage` applies both to `amountOut` and `amountIn` and defines an acceptable range (`minAmountIn` and `minAmountOut`).
      * - Any amount higher than `minAmountIn` is accepted and converted to the output asset as long as `minAmountOut` is met.
-     * - The `amountIn` can be less, as long as the 'slippage + 1%' constraint is met. If the total received by the deadline is below the lower bound, the deposit is refunded.
+     * - The deposit must be at least `minAmountIn`, after applying the slippage constraint to the quoted amount. Deposits below `minAmountIn` are refunded if the total received by the deadline is below this amount.
      * - If deposits exceed the upper bound, the swap is still processed
      */
     swapType: QuoteRequest.swapType;
@@ -56,7 +61,7 @@ export type QuoteRequest = {
      */
     destinationAsset: string;
     /**
-     * Amount to swap as the base amount. It is interpreted as the input or output amount based on the `swapType` flag and is specified in the smallest unit of the currency (e.g., wei for ETH).
+     * Amount to swap as the base amount. It is interpreted as the input or output amount based on the `swapType` flag and is specified in the smallest unit of the currency (e.g., wei for ETH). Must be an integer string; decimal values like "0.01" are invalid—use base units (e.g. "10000000000000000" for 0.01 with 18 decimals).
      */
     amount: string;
     /**
@@ -70,7 +75,7 @@ export type QuoteRequest = {
      */
     refundType: QuoteRequest.refundType;
     /**
-     * Recipient address. The format must match `recipientType`.
+     * Recipient address. The format must match `recipientType`. Destination routing metadata, when required, must be encoded according to the destination chain address format.
      */
     recipient: string;
     /**
@@ -108,12 +113,20 @@ export type QuoteRequest = {
      */
     deadline: string;
     /**
-     * Referral identifier (lowercase only). It will be reflected in the on-chain data and displayed on public analytics platforms.
+     * Confidentiality mode for this quote. Invite-only for now: if set, API may return an invite-only message until rollout is enabled for your integration.
+     */
+    confidentiality?: QuoteRequest.confidentiality;
+    /**
+     * Distribution channel / venue identifier (for example: ledger, trustwallet). Keep lowercase for consistency.
      */
     referral?: string;
     /**
+     * Rebate distribution for this quote. Provide up to 3 confidential Intents recipients (for example, `rebate-recipient.near` on confidential Intents); each item defines a recipient and its percent share, and all shares must add up to 100.
+     */
+    rebates?: Array<Rebate>;
+    /**
      * Time in milliseconds the user is willing to wait for a quote from the relay.
-     * **If you want to receive the fastest quote - use `0` as a value**
+     * **Defaults to 0ms delay if not specified, if you want to receive the fastest quote.
      */
     quoteWaitingTimeMs?: number;
     /**
@@ -126,6 +139,8 @@ export namespace QuoteRequest {
      * What deposit address mode you will get in the response, most chain supports only `SIMPLE` and some(for example `stellar`) only `MEMO`:
      * - `SIMPLE` - usual deposit with only deposit address.
      * - `MEMO` - some chains will **REQUIRE** the `memo` together with `depositAddress` for swap to work.
+     *
+     * `depositMode` applies only to deposit transaction metadata.
      */
     export enum depositMode {
         SIMPLE = 'SIMPLE',
@@ -139,14 +154,16 @@ export namespace QuoteRequest {
      * - If deposit is above than `amountIn`, the swap is processed and the excess is refunded to `refundTo` address after swap is complete.
      *
      * - `EXACT_OUTPUT` — requests the input amount for an exact output.
-     * - The quote response would have two fields `minAmountIn` and `maxAmountIn`.
-     * - If the input is above than `maxAmountIn` the swap is processed and the excess is refunded to `refundTo` address after swap is complete.
-     * - If the input is less than  `minAmountIn`, the deposit is refunded by deadline.
+     * - The output amount (`amountOut`) is fixed; slippage is applied to the **input** side.
+     * - The quote response includes `amountIn` (the proposed input with slippage tolerance baked in) and `minAmountIn` (the minimum input required).
+     * - **Important**: `amountIn` will appear higher than `minAmountIn` by approximately your `slippageTolerance`. This is **not** price degradation—it is a buffer to ensure successful execution. Any input amount above what is actually needed for the swap is **refunded** to your `refundTo` address after the swap completes.
+     * - If the deposit is above `amountIn`, the swap is processed and the excess is refunded to `refundTo` address after swap is complete.
+     * - If the deposit is less than `minAmountIn`, the deposit is refunded by deadline.
      *
      * - `FLEX_INPUT` — a flexible input amount that allows for partial deposits and variable amounts.
      * - `slippage` applies both to `amountOut` and `amountIn` and defines an acceptable range (`minAmountIn` and `minAmountOut`).
      * - Any amount higher than `minAmountIn` is accepted and converted to the output asset as long as `minAmountOut` is met.
-     * - The `amountIn` can be less, as long as the 'slippage + 1%' constraint is met. If the total received by the deadline is below the lower bound, the deposit is refunded.
+     * - The deposit must be at least `minAmountIn`, after applying the slippage constraint to the quoted amount. Deposits below `minAmountIn` are refunded if the total received by the deadline is below this amount.
      * - If deposits exceed the upper bound, the swap is still processed
      */
     export enum swapType {
@@ -163,6 +180,7 @@ export namespace QuoteRequest {
     export enum depositType {
         ORIGIN_CHAIN = 'ORIGIN_CHAIN',
         INTENTS = 'INTENTS',
+        CONFIDENTIAL_INTENTS = 'CONFIDENTIAL_INTENTS',
     }
     /**
      * Type of refund address:
@@ -172,6 +190,7 @@ export namespace QuoteRequest {
     export enum refundType {
         ORIGIN_CHAIN = 'ORIGIN_CHAIN',
         INTENTS = 'INTENTS',
+        CONFIDENTIAL_INTENTS = 'CONFIDENTIAL_INTENTS',
     }
     /**
      * Type of recipient address:
@@ -181,6 +200,15 @@ export namespace QuoteRequest {
     export enum recipientType {
         DESTINATION_CHAIN = 'DESTINATION_CHAIN',
         INTENTS = 'INTENTS',
+        CONFIDENTIAL_INTENTS = 'CONFIDENTIAL_INTENTS',
+    }
+    /**
+     * Confidentiality mode for this quote. Invite-only for now: if set, API may return an invite-only message until rollout is enabled for your integration.
+     */
+    export enum confidentiality {
+        PUBLIC = 'public',
+        BASIC = 'basic',
+        ADVANCED = 'advanced',
     }
 }
 
