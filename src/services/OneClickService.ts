@@ -12,6 +12,7 @@ import type { TokenResponse } from '../models/TokenResponse';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
+import { withQuoteSignatureVerification } from '../quoteSignature';
 export class OneClickService {
     /**
      * Get supported tokens
@@ -43,7 +44,7 @@ export class OneClickService {
     public static getQuote(
         requestBody: QuoteRequest,
     ): CancelablePromise<QuoteResponse> {
-        return __request(OpenAPI, {
+        return withQuoteSignatureVerification(__request(OpenAPI, {
             method: 'POST',
             url: '/v0/quote',
             body: requestBody,
@@ -52,7 +53,7 @@ export class OneClickService {
                 400: `Bad Request - Invalid input data`,
                 401: `Unauthorized - JWT token is invalid`,
             },
-        });
+        }));
     }
     /**
      * Check swap execution status

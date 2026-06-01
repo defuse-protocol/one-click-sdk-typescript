@@ -55,6 +55,26 @@ const quoteRequest: QuoteRequest = {
 const quote = await OneClickService.getQuote(quoteRequest);
 ```
 
+
+## Quote Signature Verification
+
+`OneClickService.getQuote()` automatically verifies the Ed25519 signature returned by the 1Click quote endpoint before resolving. If the signature is missing, malformed, or does not match the canonical quote payload, the returned promise rejects with `QuoteSignatureVerificationError`.
+
+The SDK also exports helper functions for applications that persist quotes and want to re-check them later:
+
+```typescript
+import {
+  QuoteSignatureVerificationError,
+  verifyQuoteResponseSignature,
+  verifyQuoteResponseOrThrow,
+} from '@defuse-protocol/one-click-sdk-typescript';
+
+const isAuthentic = verifyQuoteResponseSignature(savedQuote);
+verifyQuoteResponseOrThrow(savedQuote);
+```
+
+Signature verification is a defense-in-depth authenticity check. Applications should still use TLS, authenticate the API endpoint, validate every quote field, and enforce their own risk controls.
+
 ## API Methods
 
 [See official API docs](https://docs.near-intents.org/near-intents/integration/distribution-channels/1click-api) for more info on endpoints.
