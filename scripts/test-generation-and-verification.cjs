@@ -132,8 +132,10 @@ const assertGeneratedQuoteClientVerifiesSignatures = async () => {
     generateCustomizedClient(tempRoot, publicKey);
 
     const service = fs.readFileSync(path.join(tempRoot, 'src/services/OneClickService.ts'), 'utf8');
+    const index = fs.readFileSync(path.join(tempRoot, 'src/index.ts'), 'utf8');
     assert.match(service, /import \{ withQuoteSignatureVerification \} from '\.\.\/quoteSignature';/);
     assert.match(service, /return withQuoteSignatureVerification\(__request\(OpenAPI, \{/);
+    assert.match(index, /verifyQuoteResponseSignature/);
 
     transpileGeneratedClient(path.join(tempRoot, 'src'), path.join(tempRoot, 'dist'));
 
