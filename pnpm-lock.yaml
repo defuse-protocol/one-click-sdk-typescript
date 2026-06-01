@@ -11,6 +11,12 @@ dependencies:
   form-data:
     specifier: ^4.0.0
     version: 4.0.2
+  js-sha256:
+    specifier: ^0.11.1
+    version: 0.11.1
+  tweetnacl:
+    specifier: ^1.0.3
+    version: 1.0.3
 
 devDependencies:
   openapi-typescript-codegen:
@@ -868,6 +874,10 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
+  /js-sha256@0.11.1:
+    resolution: {integrity: sha512-o6WSo/LUvY2uC4j7mO50a2ms7E/EAdbP0swigLV+nzHKTTaYnaLIWJ02VdXrsJX0vGedDESQnLsOekr94ryfjg==}
+    dev: false
+
   /js-yaml@4.1.0:
     resolution: {integrity: sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==}
     hasBin: true
@@ -1228,6 +1238,10 @@ packages:
       - tsx
       - yaml
     dev: true
+
+  /tweetnacl@1.0.3:
+    resolution: {integrity: sha512-6rt+RN7aOi1nGMyC4Xa5DdYiukl2UWCbcJft7YhxReBGQD7OAM8Pbxw6YMo4r2diNEA8FEmu32YOn9rhaiE5yw==}
+    dev: false
 
   /typescript@5.8.2:
     resolution: {integrity: sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ==}

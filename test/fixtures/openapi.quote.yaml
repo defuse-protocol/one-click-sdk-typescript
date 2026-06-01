@@ -1,0 +1,124 @@
+openapi: 3.0.3
+info:
+  title: 1Click Quote Fixture
+  version: 0.0.0
+servers:
+  - url: https://1click.example.test
+paths:
+  /v0/quote:
+    post:
+      tags:
+        - OneClick
+      operationId: getQuote
+      summary: Request a swap quote
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuoteRequest'
+      responses:
+        '200':
+          description: Quote response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuoteResponse'
+components:
+  schemas:
+    QuoteRequest:
+      type: object
+      required:
+        - dry
+        - swapType
+        - slippageTolerance
+        - originAsset
+        - depositType
+        - destinationAsset
+        - amount
+        - refundTo
+        - refundType
+        - recipient
+        - recipientType
+        - deadline
+      properties:
+        dry:
+          type: boolean
+        swapType:
+          type: string
+          enum: [EXACT_INPUT]
+        slippageTolerance:
+          type: number
+        originAsset:
+          type: string
+        depositType:
+          type: string
+          enum: [ORIGIN_CHAIN]
+        destinationAsset:
+          type: string
+        amount:
+          type: string
+        refundTo:
+          type: string
+        refundType:
+          type: string
+          enum: [ORIGIN_CHAIN]
+        recipient:
+          type: string
+        recipientType:
+          type: string
+          enum: [DESTINATION_CHAIN]
+        deadline:
+          type: string
+    Quote:
+      type: object
+      required:
+        - amountIn
+        - amountInFormatted
+        - amountInUsd
+        - minAmountIn
+        - amountOut
+        - amountOutFormatted
+        - amountOutUsd
+        - minAmountOut
+        - timeEstimate
+      properties:
+        depositAddress:
+          type: string
+        amountIn:
+          type: string
+        amountInFormatted:
+          type: string
+        amountInUsd:
+          type: string
+        minAmountIn:
+          type: string
+        amountOut:
+          type: string
+        amountOutFormatted:
+          type: string
+        amountOutUsd:
+          type: string
+        minAmountOut:
+          type: string
+        timeEstimate:
+          type: number
+    QuoteResponse:
+      type: object
+      required:
+        - correlationId
+        - timestamp
+        - signature
+        - quoteRequest
+        - quote
+      properties:
+        correlationId:
+          type: string
+        timestamp:
+          type: string
+        signature:
+          type: string
+        quoteRequest:
+          $ref: '#/components/schemas/QuoteRequest'
+        quote:
+          $ref: '#/components/schemas/Quote'

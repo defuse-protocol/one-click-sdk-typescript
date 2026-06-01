@@ -24,12 +24,14 @@
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "fetch-api": "curl -o openapi.yaml https://1click.chaindefuser.com/docs/v0/openapi.yaml",
-    "generate": "openapi --input openapi.yaml --output ./src --client axios",
+    "generate": "pnpm run generate:openapi && node scripts/apply-customizations.cjs",
     "generate:fresh": "pnpm run fetch-api && pnpm run generate",
     "clean": "rm -rf dist node_modules",
     "prepublishOnly": "pnpm run clean && pnpm install && pnpm run generate:fresh && pnpm run build",
     "prepack": "pnpm run build",
-    "release": "pnpm run prepublishOnly && pnpm publish --access public"
+    "release": "pnpm run prepublishOnly && pnpm publish --access public",
+    "generate:openapi": "openapi --input openapi.yaml --output ./src --client axios",
+    "test:e2e": "pnpm build && node scripts/test-generation-and-verification.cjs"
   },
   "repository": {
     "type": "git",
@@ -56,7 +58,9 @@
   },
   "dependencies": {
     "axios": "^1.6.8",
-    "form-data": "^4.0.0"
+    "form-data": "^4.0.0",
+    "js-sha256": "^0.11.1",
+    "tweetnacl": "^1.0.3"
   },
   "packageManager": "pnpm@8.15.4",
   "publishConfig": {
