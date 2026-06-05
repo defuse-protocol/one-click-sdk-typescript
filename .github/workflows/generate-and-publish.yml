@@ -17,6 +17,7 @@ jobs:
     permissions:
       contents: write
       id-token: write
+      pull-requests: write
 
     steps:
       - name: Checkout repository
@@ -42,6 +43,7 @@ jobs:
         if: steps.get-version.outputs.version != ''
         env:
           API_VERSION: ${{ steps.get-version.outputs.version }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           chmod +x ./scripts/regenerate-and-publish.sh
           ./scripts/regenerate-and-publish.sh
