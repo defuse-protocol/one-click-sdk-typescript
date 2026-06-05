@@ -107,6 +107,21 @@ export { TonConnectPayloadSchema__Parsed } from './models/TonConnectPayloadSchem
 export { TonConnectPayloadSchemaText } from './models/TonConnectPayloadSchemaText';
 export type { TransactionDetails } from './models/TransactionDetails';
 
+export {
+    buildSignedQuote,
+    buildSignedQuoteRequest,
+    hashQuote,
+    quoteHash,
+    verifyQuoteSignature,
+} from './quote-signature';
+export type {
+    OneClickQuote,
+    OneClickQuoteRequest,
+    OneClickQuoteResponse,
+    OneClickSignedQuote,
+    OneClickSignedQuoteRequest,
+} from './quote-signature';
+
 export { AccountService } from './services/AccountService';
 export { OneClickService } from './services/OneClickService';
 export { UserAuthService } from './services/UserAuthService';
