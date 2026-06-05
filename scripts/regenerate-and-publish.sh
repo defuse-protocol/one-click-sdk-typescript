@@ -33,9 +33,7 @@ git commit -m "Release: ${VERSION_NUMBER} version" || echo "No changes to commit
 
 # Publish to npm
 echo "Publishing to npm..."
-echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
 npm publish --access public
-rm -f .npmrc
 
 # Push changes to the repository
 echo "Pushing changes to remote..."
