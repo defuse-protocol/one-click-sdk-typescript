@@ -22,7 +22,7 @@
     "pnpm": ">=8"
   },
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "build": "tsup --entry.index src/main.ts --format cjs,esm --dts --clean",
     "fetch-api": "curl -o openapi.yaml https://1click.chaindefuser.com/docs/v0/openapi.yaml",
     "generate": "openapi --input openapi.yaml --output ./src --client axios",
     "generate:fresh": "pnpm run fetch-api && pnpm run generate",
