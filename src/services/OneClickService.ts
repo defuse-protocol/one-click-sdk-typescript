@@ -2,12 +2,16 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { GenerateIntentResponse } from '../models/GenerateIntentResponse';
+import type { GenerateSwapTransferIntentRequest } from '../models/GenerateSwapTransferIntentRequest';
 import type { GetAnyInputQuoteWithdrawals } from '../models/GetAnyInputQuoteWithdrawals';
 import type { GetExecutionStatusResponse } from '../models/GetExecutionStatusResponse';
 import type { QuoteRequest } from '../models/QuoteRequest';
 import type { QuoteResponse } from '../models/QuoteResponse';
 import type { SubmitDepositTxRequest } from '../models/SubmitDepositTxRequest';
 import type { SubmitDepositTxResponse } from '../models/SubmitDepositTxResponse';
+import type { SubmitIntentResponse } from '../models/SubmitIntentResponse';
+import type { SubmitSwapTransferIntentRequest } from '../models/SubmitSwapTransferIntentRequest';
 import type { TokenResponse } from '../models/TokenResponse';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -137,6 +141,62 @@ export class OneClickService {
             mediaType: 'application/json',
             errors: {
                 400: `Bad Request - Invalid input data`,
+                401: `Unauthorized - API key or JWT token is invalid`,
+            },
+        });
+    }
+    /**
+     * Generate an intent for signing
+     * Generates an unsigned intent payload that needs to be signed by the user.
+     *
+     * This endpoint takes a quote's deposit address and other parameters, validates the quote state, and returns an intent payload formatted according to the specified signing standard (e.g., NEP413, ERC191).
+     *
+     * The generated intent must be signed by the user's wallet and then submitted via the `/submit-intent` endpoint to complete the action (e.g. swap).
+     *
+     * **Request Type Variants:**
+     * - `swap_transfer`: Generate an intent for a swap operation (requires depositAddress, signerId, standard)
+     * @param requestBody
+     * @returns GenerateIntentResponse Successfully generated intent payload
+     * @throws ApiError
+     */
+    public static generateIntent(
+        requestBody: GenerateSwapTransferIntentRequest,
+    ): CancelablePromise<GenerateIntentResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/v0/generate-intent',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `Bad Request - Invalid input or quote state`,
+                401: `Unauthorized - API key or JWT token is invalid`,
+            },
+        });
+    }
+    /**
+     * Submit a signed intent
+     * Submits a signed intent to execute.
+     *
+     * After generating an intent via `/generate-intent` and having the user sign it with their wallet, submit the signed intent through this endpoint.
+     *
+     * The system validates the signature, processes the intent, and returns the intent hash upon successful submission.
+     *
+     * **Request Type Variants:**
+     * - `swap_transfer`: Submit a signed swap intent (requires signedData object)
+     * @param requestBody
+     * @returns SubmitIntentResponse Successfully submitted intent
+     * @throws ApiError
+     */
+    public static submitIntent(
+        requestBody: SubmitSwapTransferIntentRequest,
+    ): CancelablePromise<SubmitIntentResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/v0/submit-intent',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `Bad Request - Invalid signature or intent data`,
                 401: `Unauthorized - API key or JWT token is invalid`,
             },
         });
