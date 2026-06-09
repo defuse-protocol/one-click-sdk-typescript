@@ -20,6 +20,7 @@ export type { DefusePayload_for_DefuseIntents } from './models/DefusePayload_for
 export type { Erc191Payload } from './models/Erc191Payload';
 export type { FeesConfig } from './models/FeesConfig';
 export type { FtWithdraw } from './models/FtWithdraw';
+export type { GenerateIntentResponse } from './models/GenerateIntentResponse';
 export { GenerateSwapTransferIntentRequest } from './models/GenerateSwapTransferIntentRequest';
 export type { GetAnyInputQuoteWithdrawals } from './models/GetAnyInputQuoteWithdrawals';
 export type { GetBalancesResponse } from './models/GetBalancesResponse';
@@ -97,6 +98,7 @@ export type { StorageDeposit } from './models/StorageDeposit';
 export type { String } from './models/String';
 export type { SubmitDepositTxRequest } from './models/SubmitDepositTxRequest';
 export { SubmitDepositTxResponse } from './models/SubmitDepositTxResponse';
+export type { SubmitIntentResponse } from './models/SubmitIntentResponse';
 export { SubmitSwapTransferIntentRequest } from './models/SubmitSwapTransferIntentRequest';
 export type { SwapDetails } from './models/SwapDetails';
 export type { Tip191Payload } from './models/Tip191Payload';
