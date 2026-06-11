@@ -19,3 +19,11 @@ export type {
     OneClickSignedQuote,
     OneClickSignedQuoteRequest,
 } from './quote-signature';
+
+export { verifyDepositProof } from './deposit-proof';
+export type {
+    DepositProof,
+    DepositProofType,
+    VerifyDepositProofOptions,
+    VerifyDepositProofResult,
+} from './deposit-proof';
