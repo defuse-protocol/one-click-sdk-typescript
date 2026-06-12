@@ -52,6 +52,13 @@ export type OneClickSignedQuote = {
     minAmountOut: Quote['minAmountOut'];
 };
 
+export function decodeEd25519Base58(value: string): Uint8Array {
+    const encoded = value.startsWith(ED25519_PREFIX)
+        ? value.slice(ED25519_PREFIX.length)
+        : value;
+    return base58.decode(encoded);
+}
+
 export function buildSignedQuoteRequest(
     response: OneClickQuoteResponse,
 ): OneClickSignedQuoteRequest {
@@ -145,11 +152,4 @@ export function verifyQuoteSignature(
     } catch {
         return false;
     }
-}
-
-function decodeEd25519Base58(value: string): Uint8Array {
-    const encoded = value.startsWith(ED25519_PREFIX)
-        ? value.slice(ED25519_PREFIX.length)
-        : value;
-    return base58.decode(encoded);
 }
