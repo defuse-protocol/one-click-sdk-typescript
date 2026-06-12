@@ -9,6 +9,8 @@ import type { QuoteRequest } from './models/QuoteRequest';
 import type { QuoteResponse } from './models/QuoteResponse';
 
 const ED25519_PREFIX = 'ed25519:';
+export const ONE_CLICK_MANAGER_PUB_KEY_STAGE =
+  'ed25519:5J5tkaxyPoR3Q9S8LXfo5bWnXK5Z2bctJ4mB9gENh7co';
 
 export type OneClickQuoteRequest = QuoteRequest;
 export type OneClickQuote = Quote;
