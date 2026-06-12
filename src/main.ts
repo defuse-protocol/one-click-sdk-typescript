@@ -20,10 +20,5 @@ export type {
     OneClickSignedQuoteRequest,
 } from './quote-signature';
 
-export { verifyDepositProof } from './deposit-proof';
-export type {
-    DepositProof,
-    DepositProofType,
-    VerifyDepositProofOptions,
-    VerifyDepositProofResult,
-} from './deposit-proof';
+export { verifyDepositAddressSignature } from './deposit-proof';
+export type { VerifyDepositAddressSignatureResult } from './deposit-proof';
