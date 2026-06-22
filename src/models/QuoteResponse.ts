@@ -18,6 +18,10 @@ export type QuoteResponse = {
      */
     signature: string;
     /**
+     * Signature over the full quote payload including deposit address. Present on non-dry quotes.
+     */
+    quoteSignature?: string;
+    /**
      * User request
      */
     quoteRequest: QuoteRequest;

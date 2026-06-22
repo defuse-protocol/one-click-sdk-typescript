@@ -139,7 +139,54 @@ export function quoteHash(response: OneClickQuoteResponse): string {
     );
 }
 
+export function fullQuoteHash(response: OneClickQuoteResponse): string {
+    return hashQuote(
+        buildSignedQuoteRequest(response),
+        response.quote,
+        response.timestamp,
+    );
+}
+
+export interface VerifyQuoteSignatureResult {
+    valid: boolean;
+    error?: string;
+}
+
+// so we can test internally with pure functional pattern
+export function _verifyQuoteSignatureInternal(
+    response: OneClickQuoteResponse,
+    quoteSignature: string,
+    managerPublicKey: string,
+): VerifyQuoteSignatureResult {
+    try {
+        const signatureBytes = decodeEd25519Base58(quoteSignature);
+        const publicKeyBytes = decodeEd25519Base58(managerPublicKey);
+        const message = new TextEncoder().encode(fullQuoteHash(response));
+
+        return { valid: nacl.sign.detached.verify(message, signatureBytes, publicKeyBytes) };
+    } catch (error) {
+        return {
+            valid: false,
+            error: `Verification error: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
+}
+
 export function verifyQuoteSignature(
+    response: OneClickQuoteResponse,
+): VerifyQuoteSignatureResult {
+    if (!response.quoteSignature) {
+        return { valid: false, error: 'Quote signature is missing from quote response' };
+    }
+
+    return _verifyQuoteSignatureInternal(
+        response,
+        response.quoteSignature,
+        ONE_CLICK_MANAGER_PUB_KEY,
+    );
+}
+
+export function verifyLegacyQuoteSignature(
     response: OneClickQuoteResponse,
     managerPublicKey = ONE_CLICK_MANAGER_PUB_KEY,
 ): boolean {

@@ -8,8 +8,10 @@ export type * from './index'
 export {
     buildSignedQuote,
     buildSignedQuoteRequest,
+    fullQuoteHash,
     hashQuote,
     quoteHash,
+    verifyLegacyQuoteSignature,
     verifyQuoteSignature,
 } from './quote-signature';
 export type {
@@ -18,7 +20,5 @@ export type {
     OneClickQuoteResponse,
     OneClickSignedQuote,
     OneClickSignedQuoteRequest,
+    VerifyQuoteSignatureResult,
 } from './quote-signature';
-
-export { verifyDepositAddressSignature } from './deposit-proof';
-export type { VerifyDepositAddressSignatureResult } from './deposit-proof';
