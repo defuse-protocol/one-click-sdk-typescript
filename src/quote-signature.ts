@@ -107,28 +107,25 @@ export function buildSignedQuoteRequest(
     };
 }
 
-export function buildDrySignedQuote(
+function buildSignedQuote(
     response: OneClickQuoteResponse,
-): OneClickDrySignedQuote {
+): OneClickDrySignedQuote | OneClickFullSignedQuote {
     const { quote } = response;
+    const dry = response.quoteRequest.dry
 
-    return {
-        amountIn: quote.amountIn,
-        amountInFormatted: quote.amountInFormatted,
-        amountInUsd: quote.amountInUsd,
-        minAmountIn: quote.minAmountIn,
-        amountOut: quote.amountOut,
-        amountOutFormatted: quote.amountOutFormatted,
-        amountOutUsd: quote.amountOutUsd,
-        minAmountOut: quote.minAmountOut,
-    };
-}
-
-export function buildFullSignedQuote(
-    response: OneClickQuoteResponse,
-): OneClickFullSignedQuote {
-    const { quote } = response;
-
+    if (dry) {
+        return {
+            amountIn: quote.amountIn,
+            amountInFormatted: quote.amountInFormatted,
+            amountInUsd: quote.amountInUsd,
+            minAmountIn: quote.minAmountIn,
+            amountOut: quote.amountOut,
+            amountOutFormatted: quote.amountOutFormatted,
+            amountOutUsd: quote.amountOutUsd,
+            minAmountOut: quote.minAmountOut,
+        };
+    }  
+    
     return {
         amountIn: quote.amountIn,
         amountInFormatted: quote.amountInFormatted,
@@ -162,10 +159,9 @@ export function hashQuote(
 }
 
 export function quoteHash(response: OneClickQuoteResponse): string {
-    const isDryQuote = response.quoteRequest.dry
     return hashQuote(
         buildSignedQuoteRequest(response),
-        isDryQuote ? buildDrySignedQuote(response) : buildFullSignedQuote(response),
+        buildSignedQuote(response),
         response.timestamp,
     );
 }
@@ -180,11 +176,6 @@ export function verifyQuoteSignature(
         const publicKeyBytes = decodeEd25519Base58(managerPublicKey);
         const message = new TextEncoder().encode(quoteHash(response));
 
-        const valid = nacl.sign.detached.verify(
-            message,
-            signatureBytes,
-            publicKeyBytes,
-        );
         return nacl.sign.detached.verify(message, signatureBytes, publicKeyBytes);
     } catch (error) {
         return false;
