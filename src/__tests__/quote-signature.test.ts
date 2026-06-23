@@ -160,8 +160,7 @@ describe('verifyQuoteSignature', () => {
                 STAGING_DRY_QUOTE,
                 STAGING_MANAGER_PUB_KEY,
             );
-            expect(result.valid).toBe(true);
-            expect(result.error).toBeUndefined();
+            expect(result).toBe(true);
         });
 
         it('rejects a dry quote with missing signature', () => {
@@ -173,8 +172,7 @@ describe('verifyQuoteSignature', () => {
                 quoteWithoutSignature as OneClickQuoteResponse,
                 STAGING_MANAGER_PUB_KEY,
             );
-            expect(result.valid).toBe(false);
-            expect(result.error).toBe('Signature is missing');
+            expect(result).toBe(false);
         });
 
         it('rejects a dry quote with fake signature', () => {
@@ -186,7 +184,7 @@ describe('verifyQuoteSignature', () => {
                 quoteWithFakeSignature as OneClickQuoteResponse,
                 STAGING_MANAGER_PUB_KEY,
             );
-            expect(result.valid).toBe(false);
+            expect(result).toBe(false);
         });
     });
 
@@ -196,8 +194,7 @@ describe('verifyQuoteSignature', () => {
                 STAGING_NON_DRY_QUOTE,
                 STAGING_MANAGER_PUB_KEY,
             );
-            expect(result.valid).toBe(true);
-            expect(result.error).toBeUndefined();
+            expect(result).toBe(true);
         });
 
         it('rejects a non-dry quote with missing signature', () => {
@@ -209,8 +206,7 @@ describe('verifyQuoteSignature', () => {
                 quoteWithoutSignature as OneClickQuoteResponse,
                 STAGING_MANAGER_PUB_KEY,
             );
-            expect(result.valid).toBe(false);
-            expect(result.error).toBe('Signature is missing');
+            expect(result).toBe(false);
         });
 
         it('rejects a non-dry quote with fake signature', () => {
@@ -222,7 +218,7 @@ describe('verifyQuoteSignature', () => {
                 quoteWithFakeSignature as OneClickQuoteResponse,
                 STAGING_MANAGER_PUB_KEY,
             );
-            expect(result.valid).toBe(false);
+            expect(result).toBe(false);
         });
 
         it('rejects if deposit address is tampered (MITM simulation)', () => {
@@ -237,7 +233,7 @@ describe('verifyQuoteSignature', () => {
                 tamperedResponse as OneClickQuoteResponse,
                 STAGING_MANAGER_PUB_KEY,
             );
-            expect(result.valid).toBe(false);
+            expect(result).toBe(false);
         });
     });
 
@@ -247,8 +243,7 @@ describe('verifyQuoteSignature', () => {
                 STAGING_STATUS_QUOTE_RESPONSE,
                 STAGING_MANAGER_PUB_KEY,
             );
-            expect(result.valid).toBe(true);
-            expect(result.error).toBeUndefined();
+            expect(result).toBe(true);
         });
     });
 
@@ -262,7 +257,7 @@ describe('verifyQuoteSignature', () => {
                 quoteWithMalformedSignature as OneClickQuoteResponse,
                 STAGING_MANAGER_PUB_KEY,
             );
-            expect(result.valid).toBe(false);
+            expect(result).toBe(false);
         });
     });
 });

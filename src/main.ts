@@ -14,7 +14,6 @@ export type {
     OneClickQuoteRequest,
     OneClickQuoteResponse,
     OneClickSignedQuoteRequest,
-    SignatureVerificationResult,
     OneClickFullSignedQuote,
     OneClickDrySignedQuote
 } from './quote-signature';

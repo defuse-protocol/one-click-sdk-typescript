@@ -15,11 +15,6 @@ export type OneClickQuoteRequest = QuoteRequest;
 export type OneClickQuote = Quote;
 export type OneClickQuoteResponse = QuoteResponse;
 
-export type SignatureVerificationResult = {
-    valid: boolean;
-    error?: string;
-};
-
 export type OneClickSignedQuoteRequest = {
     dry: QuoteRequest['dry'];
     swapType: QuoteRequest['swapType'];
@@ -89,12 +84,19 @@ export function buildSignedQuoteRequest(
         recipient: quoteRequest.recipient,
         recipientType: quoteRequest.recipientType,
         deadline: quoteRequest.deadline,
-        quoteWaitingTimeMs: quoteRequest.quoteWaitingTimeMs || undefined,
-        referral: quoteRequest.referral || undefined,
-        virtualChainRecipient: quoteRequest.virtualChainRecipient || undefined,
-        virtualChainRefundRecipient:
-            quoteRequest.virtualChainRefundRecipient || undefined,
-        customRecipientMsg: quoteRequest.customRecipientMsg || undefined,
+        quoteWaitingTimeMs: quoteRequest.quoteWaitingTimeMs
+            ? quoteRequest.quoteWaitingTimeMs
+            : undefined,
+        referral: quoteRequest.referral ? quoteRequest.referral : undefined,
+        virtualChainRecipient: quoteRequest.virtualChainRecipient
+            ? quoteRequest.virtualChainRecipient
+            : undefined,
+        virtualChainRefundRecipient: quoteRequest.virtualChainRefundRecipient
+            ? quoteRequest.virtualChainRefundRecipient
+            : undefined,
+        customRecipientMsg: quoteRequest.customRecipientMsg
+            ? quoteRequest.customRecipientMsg
+            : undefined,
         sessionId: undefined,
         connectedWallets: undefined,
         correlationId: undefined,
@@ -172,34 +174,20 @@ export function quoteHash(response: OneClickQuoteResponse): string {
 export function verifyQuoteSignature(
     response: OneClickQuoteResponse,
     managerPublicKey = ONE_CLICK_MANAGER_PUB_KEY,
-): SignatureVerificationResult {
-    if (!response.signature) {
-        return { valid: false, error: 'Signature is missing' };
-    }
-    return verifySignature(response.signature,  quoteHash(response), managerPublicKey);
-}
-
-function verifySignature(
-    signature: string,
-    hash: string,
-    publicKey: string,
-): SignatureVerificationResult {
+): boolean {
     try {
-        const signatureBytes = decodeEd25519Base58(signature);
-        const publicKeyBytes = decodeEd25519Base58(publicKey);
-        const message = new TextEncoder().encode(hash);
+        const signatureBytes = decodeEd25519Base58(response.signature);
+        const publicKeyBytes = decodeEd25519Base58(managerPublicKey);
+        const message = new TextEncoder().encode(quoteHash(response));
 
         const valid = nacl.sign.detached.verify(
             message,
             signatureBytes,
             publicKeyBytes,
         );
-        return { valid };
+        return nacl.sign.detached.verify(message, signatureBytes, publicKeyBytes);
     } catch (error) {
-        return {
-            valid: false,
-            error: 'Signature verification failed',
-        };
+        return false;
     }
 }
 
