@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Quote } from './Quote';
-
+import type { QuoteRequest } from './QuoteRequest';
 export type QuoteResponse = {
     /**
      * Unique identifier for request tracing and debugging
@@ -17,6 +17,10 @@ export type QuoteResponse = {
      * Signature of the 1Click service confirming the quote for the specific deposit address. Must be saved on the client side (along with the whole quote) in order to resolve any disputes or mistakes.
      */
     signature: string;
+    /**
+     * User request
+     */
+    quoteRequest: QuoteRequest;
     /**
      * V2 Signature over the full quote payload including deposit address. Present on non-dry quotes.
      */

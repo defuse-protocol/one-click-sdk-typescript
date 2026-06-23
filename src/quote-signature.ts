@@ -12,9 +12,7 @@ export const ONE_CLICK_MANAGER_PUB_KEY =
 
 export type OneClickQuoteRequest = QuoteRequest;
 export type OneClickQuote = Quote;
-export type OneClickQuoteResponse = QuoteResponse & {
-    quoteRequest: QuoteRequest;
-};
+export type OneClickQuoteResponse = QuoteResponse
 
 export interface VerifyQuoteSignatureResult {
     valid: boolean;
