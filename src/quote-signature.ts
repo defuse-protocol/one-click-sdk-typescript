@@ -47,7 +47,7 @@ export type OneClickSignedQuoteRequest = {
     depositMode?: undefined;
 };
 
-export type OneClickSignedQuote = {
+export type OneClickDrySignedQuote = {
     amountIn: Quote['amountIn'];
     amountInFormatted: Quote['amountInFormatted'];
     amountInUsd: Quote['amountInUsd'];
@@ -58,7 +58,7 @@ export type OneClickSignedQuote = {
     minAmountOut: Quote['minAmountOut'];
 };
 
-export type OneClickFullSignedQuote = OneClickSignedQuote & {
+export type OneClickFullSignedQuote = OneClickDrySignedQuote & {
     depositAddress?: Quote['depositAddress'];
     depositMemo?: Quote['depositMemo'];
     deadline?: Quote['deadline'];
@@ -105,9 +105,9 @@ export function buildSignedQuoteRequest(
     };
 }
 
-export function buildSignedQuote(
+export function buildDrySignedQuote(
     response: OneClickQuoteResponse,
-): OneClickSignedQuote {
+): OneClickDrySignedQuote {
     const { quote } = response;
 
     return {
@@ -152,7 +152,7 @@ export function buildFullSignedQuote(
 
 export function hashQuote(
     request: OneClickSignedQuoteRequest,
-    quote: OneClickSignedQuote | OneClickFullSignedQuote,
+    quote: OneClickDrySignedQuote | OneClickFullSignedQuote,
     timestamp: string,
 ): string {
     const dataString = stringify({ ...request, ...quote, timestamp });
@@ -160,26 +160,15 @@ export function hashQuote(
 }
 
 export function quoteHash(response: OneClickQuoteResponse): string {
+    const isDryQuote = response.quoteRequest.dry
     return hashQuote(
         buildSignedQuoteRequest(response),
-        buildSignedQuote(response),
+        isDryQuote ? buildDrySignedQuote(response) : buildFullSignedQuote(response),
         response.timestamp,
     );
 }
 
-export function fullQuoteHash(response: OneClickQuoteResponse): string {
-    return hashQuote(
-        buildSignedQuoteRequest(response),
-        buildFullSignedQuote(response),
-        response.timestamp,
-    );
-}
-
-/**
- * Verifies the quote signature based on the dry flag:
- * - dry: true  → verifies against minimal payload (no deposit address)
- * - dry: false → verifies against full payload (includes deposit address)
- */
+// Verifies the quote signature. dry true old minimal payload else full pauload with deposit address
 export function verifyQuoteSignature(
     response: OneClickQuoteResponse,
     managerPublicKey = ONE_CLICK_MANAGER_PUB_KEY,
@@ -187,11 +176,7 @@ export function verifyQuoteSignature(
     if (!response.signature) {
         return { valid: false, error: 'Signature is missing' };
     }
-
-    const isDry = response.quoteRequest.dry;
-    const hash = isDry ? quoteHash(response) : fullQuoteHash(response);
-
-    return verifySignature(response.signature, hash, managerPublicKey);
+    return verifySignature(response.signature,  quoteHash(response), managerPublicKey);
 }
 
 function verifySignature(

@@ -147,7 +147,7 @@ const STAGING_STATUS_QUOTE_RESPONSE = {
         refundFee: '1900',
         withdrawFee: '300000',
     },
-} as OneClickQuoteResponse;
+} as any;
 
 const TAMPERED_DEPOSIT_ADDRESS = 'bc1q0000000000000000000000000000000000000000';
 const FAKE_SIGNATURE =
