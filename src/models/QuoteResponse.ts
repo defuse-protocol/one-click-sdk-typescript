@@ -22,10 +22,6 @@ export type QuoteResponse = {
      */
     quoteRequest: QuoteRequest;
     /**
-     * V2 Signature over the full quote payload including deposit address. Present on non-dry quotes.
-     */
-    signatureWithDepositAddress?: string;
-    /**
      * Response containing the deposit address for sending the `amount` of `originAsset` and the expected output amount.
      */
     quote: Quote;
