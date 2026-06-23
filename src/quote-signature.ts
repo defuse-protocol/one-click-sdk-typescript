@@ -12,45 +12,14 @@ const ED25519_PREFIX = 'ed25519:';
 
 export type OneClickQuoteRequest = QuoteRequest;
 export type OneClickQuote = Quote;
-export type OneClickQuoteResponse = QuoteResponse;
-
-export type OneClickSignedQuoteRequest = {
-    dry: QuoteRequest['dry'];
-    swapType: QuoteRequest['swapType'];
-    slippageTolerance: QuoteRequest['slippageTolerance'];
-    originAsset: QuoteRequest['originAsset'];
-    depositType: QuoteRequest['depositType'];
-    destinationAsset: QuoteRequest['destinationAsset'];
-    amount: QuoteRequest['amount'];
-    refundTo: QuoteRequest['refundTo'];
-    refundType: QuoteRequest['refundType'];
-    recipient: QuoteRequest['recipient'];
-    recipientType: QuoteRequest['recipientType'];
-    deadline: QuoteRequest['deadline'];
-    quoteWaitingTimeMs?: QuoteRequest['quoteWaitingTimeMs'];
-    referral?: QuoteRequest['referral'];
-    virtualChainRecipient?: QuoteRequest['virtualChainRecipient'];
-    virtualChainRefundRecipient?: QuoteRequest['virtualChainRefundRecipient'];
-    customRecipientMsg?: QuoteRequest['customRecipientMsg'];
-    sessionId?: undefined;
-    connectedWallets?: undefined;
-    correlationId?: undefined;
-    appFees?: undefined;
-    partnerId?: undefined;
-    userAccountId?: undefined;
-    depositMode?: undefined;
+export type OneClickQuoteResponse = QuoteResponse & {
+    quoteRequest: QuoteRequest;
 };
 
-export type OneClickSignedQuote = {
-    amountIn: Quote['amountIn'];
-    amountInFormatted: Quote['amountInFormatted'];
-    amountInUsd: Quote['amountInUsd'];
-    minAmountIn: Quote['minAmountIn'];
-    amountOut: Quote['amountOut'];
-    amountOutFormatted: Quote['amountOutFormatted'];
-    amountOutUsd: Quote['amountOutUsd'];
-    minAmountOut: Quote['minAmountOut'];
-};
+export interface VerifyQuoteSignatureResult {
+    valid: boolean;
+    error?: string;
+}
 
 export function decodeEd25519Base58(value: string): Uint8Array {
     const encoded = value.startsWith(ED25519_PREFIX)
@@ -59,12 +28,10 @@ export function decodeEd25519Base58(value: string): Uint8Array {
     return base58.decode(encoded);
 }
 
-export function buildSignedQuoteRequest(
-    response: OneClickQuoteResponse,
-): OneClickSignedQuoteRequest {
+export function fullQuoteHash(response: OneClickQuoteResponse): string {
     const { quoteRequest } = response;
 
-    return {
+    const dataString = stringify({
         dry: quoteRequest.dry,
         swapType: quoteRequest.swapType,
         slippageTolerance: quoteRequest.slippageTolerance,
@@ -77,19 +44,11 @@ export function buildSignedQuoteRequest(
         recipient: quoteRequest.recipient,
         recipientType: quoteRequest.recipientType,
         deadline: quoteRequest.deadline,
-        quoteWaitingTimeMs: quoteRequest.quoteWaitingTimeMs
-            ? quoteRequest.quoteWaitingTimeMs
-            : undefined,
-        referral: quoteRequest.referral ? quoteRequest.referral : undefined,
-        virtualChainRecipient: quoteRequest.virtualChainRecipient
-            ? quoteRequest.virtualChainRecipient
-            : undefined,
-        virtualChainRefundRecipient: quoteRequest.virtualChainRefundRecipient
-            ? quoteRequest.virtualChainRefundRecipient
-            : undefined,
-        customRecipientMsg: quoteRequest.customRecipientMsg
-            ? quoteRequest.customRecipientMsg
-            : undefined,
+        quoteWaitingTimeMs: quoteRequest.quoteWaitingTimeMs || undefined,
+        referral: quoteRequest.referral || undefined,
+        virtualChainRecipient: quoteRequest.virtualChainRecipient || undefined,
+        virtualChainRefundRecipient: quoteRequest.virtualChainRefundRecipient || undefined,
+        customRecipientMsg: quoteRequest.customRecipientMsg || undefined,
         sessionId: undefined,
         connectedWallets: undefined,
         correlationId: undefined,
@@ -97,69 +56,21 @@ export function buildSignedQuoteRequest(
         partnerId: undefined,
         userAccountId: undefined,
         depositMode: undefined,
-    };
-}
-
-export function buildSignedQuote(
-    response: OneClickQuoteResponse,
-): OneClickSignedQuote {
-    const { quote } = response;
-
-    return {
-        amountIn: quote.amountIn,
-        amountInFormatted: quote.amountInFormatted,
-        amountInUsd: quote.amountInUsd,
-        minAmountIn: quote.minAmountIn,
-        amountOut: quote.amountOut,
-        amountOutFormatted: quote.amountOutFormatted,
-        amountOutUsd: quote.amountOutUsd,
-        minAmountOut: quote.minAmountOut,
-    };
-}
-
-export function hashQuote(
-    request: OneClickSignedQuoteRequest,
-    quote: OneClickSignedQuote,
-    timestamp: string,
-): string {
-    const dataString = stringify({
-        ...request,
-        ...quote,
-        timestamp,
+        ...response.quote,
+        timestamp: response.timestamp,
     });
 
     return base58.encode(sha256(new TextEncoder().encode(dataString)));
 }
 
-export function quoteHash(response: OneClickQuoteResponse): string {
-    return hashQuote(
-        buildSignedQuoteRequest(response),
-        buildSignedQuote(response),
-        response.timestamp,
-    );
-}
-
-export function fullQuoteHash(response: OneClickQuoteResponse): string {
-    return hashQuote(
-        buildSignedQuoteRequest(response),
-        response.quote,
-        response.timestamp,
-    );
-}
-
-export interface VerifyQuoteSignatureResult {
-    valid: boolean;
-    error?: string;
-}
-
 // so we can test internally with pure functional pattern
 export function _verifyQuoteSignatureInternal(
     response: OneClickQuoteResponse,
-    quoteSignature: string,
+    signatureWithDepositAddress: string,
     managerPublicKey: string,
 ): VerifyQuoteSignatureResult {
     try {
-        const signatureBytes = decodeEd25519Base58(quoteSignature);
+        const signatureBytes = decodeEd25519Base58(signatureWithDepositAddress);
         const publicKeyBytes = decodeEd25519Base58(managerPublicKey);
         const message = new TextEncoder().encode(fullQuoteHash(response));
 
@@ -175,28 +86,12 @@ export function _verifyQuoteSignatureInternal(
 export function verifyQuoteSignature(
     response: OneClickQuoteResponse,
 ): VerifyQuoteSignatureResult {
-    if (!response.quoteSignature) {
+    if (!response.signatureWithDepositAddress) {
         return { valid: false, error: 'Quote signature is missing from quote response' };
     }
-
     return _verifyQuoteSignatureInternal(
         response,
-        response.quoteSignature,
+        response.signatureWithDepositAddress,
         ONE_CLICK_MANAGER_PUB_KEY,
     );
-}
-
-export function verifyLegacyQuoteSignature(
-    response: OneClickQuoteResponse,
-    managerPublicKey = ONE_CLICK_MANAGER_PUB_KEY,
-): boolean {
-    try {
-        const signatureBytes = decodeEd25519Base58(response.signature);
-        const publicKeyBytes = decodeEd25519Base58(managerPublicKey);
-        const message = new TextEncoder().encode(quoteHash(response));
-
-        return nacl.sign.detached.verify(message, signatureBytes, publicKeyBytes);
-    } catch {
-        return false;
-    }
 }

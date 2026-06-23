@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Quote } from './Quote';
-import type { QuoteRequest } from './QuoteRequest';
+
 export type QuoteResponse = {
     /**
      * Unique identifier for request tracing and debugging
@@ -18,13 +18,9 @@ export type QuoteResponse = {
      */
     signature: string;
     /**
-     * Signature over the full quote payload including deposit address. Present on non-dry quotes.
+     * V2 Signature over the full quote payload including deposit address. Present on non-dry quotes.
      */
-    quoteSignature?: string;
-    /**
-     * User request
-     */
-    quoteRequest: QuoteRequest;
+    signatureWithDepositAddress: string;
     /**
      * Response containing the deposit address for sending the `amount` of `originAsset` and the expected output amount.
      */

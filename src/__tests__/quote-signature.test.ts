@@ -11,7 +11,7 @@ const STAGING_BTC_USDT_QUOTE: QuoteResponse = {
   correlationId: 'bc3609c0-ff88-4bbb-8734-cbc062ecde01',
   timestamp: '2026-06-22T15:19:39.301Z',
   signature: 'ed25519:2fDPX1vJfUDK6pybzBQevi4bYh5AwJQ4q1rGamQSvWkzQvndtHLYUTefGw1wyPbq9BeWoBBvcXiUHmwd7BFejP95',
-  quoteSignature: 'ed25519:maryJqGEr8Vkn7zL6VUkhiMqWtG91pTNtBkkcGkQkyF3awqQS9v429Fhb2hHwqMykB14oycySTedQvCZZNGQa8f',
+  signatureWithDepositAddress: 'ed25519:maryJqGEr8Vkn7zL6VUkhiMqWtG91pTNtBkkcGkQkyF3awqQS9v429Fhb2hHwqMykB14oycySTedQvCZZNGQa8f',
   quoteRequest: {
     dry: false,
     depositMode: 'SIMPLE',
@@ -58,8 +58,8 @@ const FAKE_QUOTE_SIGNATURE = 'ed25519:5fVqoCrPgqS9WPqnX5xvHKNYBqRZPkXvEqM9VaHZXg
 
 describe('verifyQuoteSignature', () => {
   describe('with invalid signatures', () => {
-    it('should reject when quoteSignature is missing', () => {
-      const { quoteSignature: _, ...responseWithoutQuoteSignature } = STAGING_BTC_USDT_QUOTE;
+    it('should reject when signatureWithDepositAddress is missing', () => {
+      const { signatureWithDepositAddress: _, ...responseWithoutQuoteSignature } = STAGING_BTC_USDT_QUOTE;
       const result = verifyQuoteSignature(responseWithoutQuoteSignature as QuoteResponse);
       expect(result.valid).toBe(false);
       expect(result.error).toBe('Quote signature is missing from quote response');
@@ -95,10 +95,10 @@ describe('verifyQuoteSignature', () => {
   });
 
   describe('Real quote signature verification (Staging)', () => {
-    it('should verify real BTC quoteSignature from staging', () => {
+    it('should verify real BTC signatureWithDepositAddress from staging', () => {
       const result = _verifyQuoteSignatureInternal(
         STAGING_BTC_USDT_QUOTE,
-        STAGING_BTC_USDT_QUOTE.quoteSignature!,
+        STAGING_BTC_USDT_QUOTE.signatureWithDepositAddress!,
         STAGING_MANAGER_PUB_KEY,
       );
       expect(result.valid).toBe(true);
@@ -115,7 +115,7 @@ describe('verifyQuoteSignature', () => {
       };
       const result = _verifyQuoteSignatureInternal(
         tamperedResponse,
-        STAGING_BTC_USDT_QUOTE.quoteSignature!,
+        STAGING_BTC_USDT_QUOTE.signatureWithDepositAddress!,
         STAGING_MANAGER_PUB_KEY,
       );
       expect(result.valid).toBe(false);
