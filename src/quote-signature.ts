@@ -2,13 +2,13 @@ import { sha256 } from '@noble/hashes/sha2';
 import { base58 } from '@scure/base';
 import stringify from 'json-stable-stringify';
 import nacl from 'tweetnacl';
-import { ONE_CLICK_MANAGER_PUB_KEY } from './constants';
-
 import type { Quote } from './models/Quote';
 import type { QuoteRequest } from './models/QuoteRequest';
 import type { QuoteResponse } from './models/QuoteResponse';
 
 const ED25519_PREFIX = 'ed25519:';
+export const ONE_CLICK_MANAGER_PUB_KEY =
+  'ed25519:reYaWhvwu8Jzo3WUM3zhn6VrhuMEF4eADL17qtRVifc';
 
 export type OneClickQuoteRequest = QuoteRequest;
 export type OneClickQuote = Quote;

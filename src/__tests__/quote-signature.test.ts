@@ -2,12 +2,12 @@ import { describe, it, expect } from 'vitest';
 import {
   verifyQuoteSignature,
   _verifyQuoteSignatureInternal,
+  type OneClickQuoteResponse,
 } from '../quote-signature';
-import type { QuoteResponse } from '../models/QuoteResponse';
 
 const STAGING_MANAGER_PUB_KEY = 'ed25519:5J5tkaxyPoR3Q9S8LXfo5bWnXK5Z2bctJ4mB9gENh7co';
 
-const STAGING_BTC_USDT_QUOTE: QuoteResponse = {
+const STAGING_BTC_USDT_QUOTE = {
   correlationId: 'bc3609c0-ff88-4bbb-8734-cbc062ecde01',
   timestamp: '2026-06-22T15:19:39.301Z',
   signature: 'ed25519:2fDPX1vJfUDK6pybzBQevi4bYh5AwJQ4q1rGamQSvWkzQvndtHLYUTefGw1wyPbq9BeWoBBvcXiUHmwd7BFejP95',
@@ -51,7 +51,7 @@ const STAGING_BTC_USDT_QUOTE: QuoteResponse = {
     timeWhenInactive: '2026-06-25T15:24:39.000Z',
     depositAddress: 'bc1qq7edtx63r9fw9h8qgaxjujfcxlxv4azmsvk46j',
   },
-};
+} as OneClickQuoteResponse;
 
 const TAMPERED_DEPOSIT_ADDRESS = 'bc1q0000000000000000000000000000000000000000';
 const FAKE_QUOTE_SIGNATURE = 'ed25519:5fVqoCrPgqS9WPqnX5xvHKNYBqRZPkXvEqM9VaHZXgBbPYp7qZzx5HkNvZxQK1hBkD2qT8GJfXwR9nL4mS6vYt2';
@@ -60,7 +60,7 @@ describe('verifyQuoteSignature', () => {
   describe('with invalid signatures', () => {
     it('should reject when signatureWithDepositAddress is missing', () => {
       const { signatureWithDepositAddress: _, ...responseWithoutQuoteSignature } = STAGING_BTC_USDT_QUOTE;
-      const result = verifyQuoteSignature(responseWithoutQuoteSignature as QuoteResponse);
+      const result = verifyQuoteSignature(responseWithoutQuoteSignature);
       expect(result.valid).toBe(false);
       expect(result.error).toBe('Quote signature is missing from quote response');
     });
