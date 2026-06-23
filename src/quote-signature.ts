@@ -47,13 +47,6 @@ export function fullQuoteHash(response: OneClickQuoteResponse): string {
         virtualChainRecipient: quoteRequest.virtualChainRecipient || undefined,
         virtualChainRefundRecipient: quoteRequest.virtualChainRefundRecipient || undefined,
         customRecipientMsg: quoteRequest.customRecipientMsg || undefined,
-        sessionId: undefined,
-        connectedWallets: undefined,
-        correlationId: undefined,
-        appFees: undefined,
-        partnerId: undefined,
-        userAccountId: undefined,
-        depositMode: undefined,
         ...response.quote,
         timestamp: response.timestamp,
     });
