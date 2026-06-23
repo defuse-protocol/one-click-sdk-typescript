@@ -62,7 +62,7 @@ describe('verifyQuoteSignature', () => {
       const { signatureWithDepositAddress: _, ...responseWithoutQuoteSignature } = STAGING_BTC_USDT_QUOTE;
       const result = verifyQuoteSignature(responseWithoutQuoteSignature);
       expect(result.valid).toBe(false);
-      expect(result.error).toBe('Quote signature is missing from quote response');
+      expect(result.error).toBe('signatureWithDepositAddress is required for non-dry quote verification');
     });
 
     it('should reject an empty signature', () => {

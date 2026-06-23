@@ -12,7 +12,7 @@ export const ONE_CLICK_MANAGER_PUB_KEY =
 
 export type OneClickQuoteRequest = QuoteRequest;
 export type OneClickQuote = Quote;
-export type OneClickQuoteResponse = QuoteResponse
+export type OneClickQuoteResponse = QuoteResponse;
 
 export interface VerifyQuoteSignatureResult {
     valid: boolean;
@@ -54,35 +54,48 @@ export function fullQuoteHash(response: OneClickQuoteResponse): string {
     return base58.encode(sha256(new TextEncoder().encode(dataString)));
 }
 
+function verifyByHash(
+    hash: string,
+    signature: string,
+    managerPublicKey: string,
+): VerifyQuoteSignatureResult {
+    try {
+        const signatureBytes = decodeEd25519Base58(signature);
+        const publicKeyBytes = decodeEd25519Base58(managerPublicKey);
+        const message = new TextEncoder().encode(hash);
+        return { valid: nacl.sign.detached.verify(message, signatureBytes, publicKeyBytes) };
+    } catch (error) {
+        return {
+        valid: false,
+        error: `Verification error: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
+}
+
 // so we can test internally with pure functional pattern
 export function _verifyQuoteSignatureInternal(
     response: OneClickQuoteResponse,
     signatureWithDepositAddress: string,
     managerPublicKey: string,
 ): VerifyQuoteSignatureResult {
-    try {
-        const signatureBytes = decodeEd25519Base58(signatureWithDepositAddress);
-        const publicKeyBytes = decodeEd25519Base58(managerPublicKey);
-        const message = new TextEncoder().encode(fullQuoteHash(response));
-
-        return { valid: nacl.sign.detached.verify(message, signatureBytes, publicKeyBytes) };
-    } catch (error) {
-        return {
-            valid: false,
-            error: `Verification error: ${error instanceof Error ? error.message : String(error)}`,
-        };
-    }
+    return verifyByHash(
+        fullQuoteHash(response),
+        signatureWithDepositAddress,
+        managerPublicKey,
+    );
 }
 
 export function verifyQuoteSignature(
     response: OneClickQuoteResponse,
 ): VerifyQuoteSignatureResult {
-    if (!response.signatureWithDepositAddress) {
-        return { valid: false, error: 'Quote signature is missing from quote response' };
+    const isDryQuote = response.quoteRequest?.dry === true;
+    
+    if (!isDryQuote && !response.signatureWithDepositAddress) {
+        return {
+        valid: false,
+        error:'signatureWithDepositAddress is required for non-dry quote verification',
+        };
     }
-    return _verifyQuoteSignatureInternal(
-        response,
-        response.signatureWithDepositAddress,
-        ONE_CLICK_MANAGER_PUB_KEY,
-    );
+    const signature = response.signatureWithDepositAddress ?? response.signature;
+    return verifyByHash(fullQuoteHash(response), signature, ONE_CLICK_MANAGER_PUB_KEY);
 }
