@@ -177,7 +177,7 @@ export function verifyQuoteSignature(
         const message = new TextEncoder().encode(quoteHash(response));
 
         return nacl.sign.detached.verify(message, signatureBytes, publicKeyBytes);
-    } catch (error) {
+    } catch {
         return false;
     }
 }
