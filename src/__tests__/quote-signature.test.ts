@@ -56,6 +56,98 @@ const STAGING_BTC_USDT_QUOTE = {
 const TAMPERED_DEPOSIT_ADDRESS = 'bc1q0000000000000000000000000000000000000000';
 const FAKE_QUOTE_SIGNATURE = 'ed25519:5fVqoCrPgqS9WPqnX5xvHKNYBqRZPkXvEqM9VaHZXgBbPYp7qZzx5HkNvZxQK1hBkD2qT8GJfXwR9nL4mS6vYt2';
 
+const STAGING_DRY_BTC_USDT_QUOTE = {
+  quote: {
+    amountIn: '10000',
+    amountInFormatted: '0.0001',
+    amountInUsd: '6.252300000000',
+    minAmountIn: '10000',
+    amountOut: '5942131',
+    amountOutFormatted: '5.942131',
+    amountOutUsd: '5.934988558538',
+    minAmountOut: '5882709',
+    timeEstimate: 812,
+    refundFee: '1900',
+    withdrawFee: '300000',
+  },
+  quoteRequest: {
+    dry: true,
+    depositMode: 'SIMPLE',
+    swapType: 'EXACT_INPUT',
+    slippageTolerance: 100,
+    originAsset: '1cs_v1:btc:native:coin',
+    depositType: 'ORIGIN_CHAIN',
+    destinationAsset: 'nep141:eth-0xdac17f958d2ee523a2206206994597c13d831ec7.stft.near',
+    amount: '10000',
+    refundTo: 'bc1q6mte80265ghwq4vsrpm9lnaz46uvdreu9z8wly',
+    refundType: 'ORIGIN_CHAIN',
+    recipient: '0xcac3C41676deF4FE375E57118f3eB83A99105577',
+    recipientType: 'DESTINATION_CHAIN',
+    deadline: '2026-06-23T18:00:00.000Z',
+    confidentiality: 'public',
+    quoteWaitingTimeMs: 0,
+    appFees: [
+      {
+        recipient: '5880ad2b362620fadf759cbceb1cd5737ce8c6ed7fb8e9942881e6731f9247dd',
+        fee: 10,
+      },
+    ],
+  },
+  signature:
+    'ed25519:5e31g5M7P75p2zyx8PYAfEjhvkuE9PHC297EKGBuAdkJq7ssSr7DPd9Pf7MCkCv8ntp6hUL7VYrpc5HARmVCnKh',
+  timestamp: '2026-06-23T16:28:26.671Z',
+  correlationId: 'e4a40811-7f3e-4299-8913-0850ac7513e0',
+} as OneClickQuoteResponse;
+
+const STAGING_STATUS_QUOTE_RESPONSE = {
+  timestamp: '2026-06-23T16:29:59.275Z',
+  signature:
+    'ed25519:2942gnLcUL4aiTpntbB2EEzQkUPhDvo4YvDf8HN75mg18mRKpNNZGaNc8uGc67V9rTGTeFA1vBcTbsrQiFiFsUDr',
+  signatureWithDepositAddress:
+    'ed25519:2942gnLcUL4aiTpntbB2EEzQkUPhDvo4YvDf8HN75mg18mRKpNNZGaNc8uGc67V9rTGTeFA1vBcTbsrQiFiFsUDr',
+  quoteRequest: {
+    dry: false,
+    swapType: 'EXACT_INPUT',
+    depositMode: 'SIMPLE',
+    slippageTolerance: 100,
+    originAsset: '1cs_v1:btc:native:coin',
+    depositType: 'ORIGIN_CHAIN',
+    destinationAsset: 'nep141:eth-0xdac17f958d2ee523a2206206994597c13d831ec7.stft.near',
+    amount: '10000',
+    refundTo: 'bc1q6mte80265ghwq4vsrpm9lnaz46uvdreu9z8wly',
+    refundType: 'ORIGIN_CHAIN',
+    recipient: '0xcac3C41676deF4FE375E57118f3eB83A99105577',
+    recipientType: 'DESTINATION_CHAIN',
+    deadline: '2026-06-23T17:00:00.000Z',
+    appFees: [
+      {
+        recipient: '5880ad2b362620fadf759cbceb1cd5737ce8c6ed7fb8e9942881e6731f9247dd',
+        fee: 10,
+      },
+    ],
+    virtualChainRecipient: null,
+    virtualChainRefundRecipient: null,
+    referral: null,
+    confidentiality: 'public',
+  },
+  quote: {
+    amountIn: '10000',
+    amountInFormatted: '0.0001',
+    amountInUsd: '6.251300000000',
+    minAmountIn: '10000',
+    amountOut: '5942330',
+    amountOutFormatted: '5.94233',
+    amountOutUsd: '5.935199204000',
+    minAmountOut: '5882906',
+    timeWhenInactive: '2026-06-26T17:00:00.000Z',
+    depositAddress: 'bc1qx8uhjfnmmy7hprlefvc80f6kjmkhvwsjjpht3w',
+    deadline: '2026-06-26T17:00:00.000Z',
+    timeEstimate: 812,
+    refundFee: '1900',
+    withdrawFee: '300000',
+  },
+} as any;
+
 describe('verifyQuoteSignature', () => {
   describe('with invalid signatures', () => {
     it('should reject when signatureWithDepositAddress is missing', () => {
@@ -91,6 +183,23 @@ describe('verifyQuoteSignature', () => {
         STAGING_MANAGER_PUB_KEY,
       );
       expect(result.valid).toBe(false);
+    });
+
+    it('should fail verification for provided dry quote payload', () => {
+      const result = verifyQuoteSignature(STAGING_DRY_BTC_USDT_QUOTE);
+      expect(result.valid).toBe(false);
+    });
+  });
+
+  describe('status endpoint payload', () => {
+    it('should verify provided status quoteResponse payload', () => {
+      const result = _verifyQuoteSignatureInternal(
+        STAGING_STATUS_QUOTE_RESPONSE,
+        STAGING_STATUS_QUOTE_RESPONSE.signatureWithDepositAddress!,
+        STAGING_MANAGER_PUB_KEY,
+      );
+      expect(result.valid).toBe(true);
+      expect(result.error).toBeUndefined();
     });
   });
 
