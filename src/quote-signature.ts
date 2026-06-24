@@ -42,7 +42,7 @@ export type OneClickSignedQuoteRequest = {
     depositMode?: undefined;
 };
 
-export type OneClickSignedQuote = {
+export type OneClickDrySignedQuote = {
     amountIn: Quote['amountIn'];
     amountInFormatted: Quote['amountInFormatted'];
     amountInUsd: Quote['amountInUsd'];
@@ -51,6 +51,19 @@ export type OneClickSignedQuote = {
     amountOutFormatted: Quote['amountOutFormatted'];
     amountOutUsd: Quote['amountOutUsd'];
     minAmountOut: Quote['minAmountOut'];
+};
+
+export type OneClickFullSignedQuote = OneClickDrySignedQuote & {
+    depositAddress?: Quote['depositAddress'];
+    depositMemo?: Quote['depositMemo'];
+    deadline?: Quote['deadline'];
+    timeWhenInactive?: Quote['timeWhenInactive'];
+    timeEstimate?: Quote['timeEstimate'];
+    virtualChainRecipient?: Quote['virtualChainRecipient'];
+    virtualChainRefundRecipient?: Quote['virtualChainRefundRecipient'];
+    customRecipientMsg?: Quote['customRecipientMsg'];
+    refundFee?: Quote['refundFee'];
+    withdrawFee?: Quote['withdrawFee'];
 };
 
 export function buildSignedQuoteRequest(
@@ -94,11 +107,25 @@ export function buildSignedQuoteRequest(
     };
 }
 
-export function buildSignedQuote(
+function buildSignedQuote(
     response: OneClickQuoteResponse,
-): OneClickSignedQuote {
+): OneClickDrySignedQuote | OneClickFullSignedQuote {
     const { quote } = response;
+    const dry = response.quoteRequest.dry
 
+    if (dry) {
+        return {
+            amountIn: quote.amountIn,
+            amountInFormatted: quote.amountInFormatted,
+            amountInUsd: quote.amountInUsd,
+            minAmountIn: quote.minAmountIn,
+            amountOut: quote.amountOut,
+            amountOutFormatted: quote.amountOutFormatted,
+            amountOutUsd: quote.amountOutUsd,
+            minAmountOut: quote.minAmountOut,
+        };
+    }  
+    
     return {
         amountIn: quote.amountIn,
         amountInFormatted: quote.amountInFormatted,
@@ -108,20 +135,26 @@ export function buildSignedQuote(
         amountOutFormatted: quote.amountOutFormatted,
         amountOutUsd: quote.amountOutUsd,
         minAmountOut: quote.minAmountOut,
+        depositAddress: quote.depositAddress || undefined,
+        depositMemo: quote.depositMemo || undefined,
+        deadline: quote.deadline || undefined,
+        timeWhenInactive: quote.timeWhenInactive || undefined,
+        timeEstimate: quote.timeEstimate || undefined,
+        virtualChainRecipient: quote.virtualChainRecipient || undefined,
+        virtualChainRefundRecipient:
+            quote.virtualChainRefundRecipient || undefined,
+        customRecipientMsg: quote.customRecipientMsg || undefined,
+        refundFee: quote.refundFee || undefined,
+        withdrawFee: quote.withdrawFee || undefined,
     };
 }
 
 export function hashQuote(
     request: OneClickSignedQuoteRequest,
-    quote: OneClickSignedQuote,
+    quote: OneClickDrySignedQuote | OneClickFullSignedQuote,
     timestamp: string,
 ): string {
-    const dataString = stringify({
-        ...request,
-        ...quote,
-        timestamp,
-    });
-
+    const dataString = stringify({ ...request, ...quote, timestamp });
     return base58.encode(sha256(new TextEncoder().encode(dataString)));
 }
 
@@ -133,6 +166,7 @@ export function quoteHash(response: OneClickQuoteResponse): string {
     );
 }
 
+// Verifies the quote signature. dry true old minimal payload else full pauload with deposit address
 export function verifyQuoteSignature(
     response: OneClickQuoteResponse,
     managerPublicKey = ONE_CLICK_MANAGER_PUB_KEY,
