@@ -14,6 +14,7 @@ export type { AuthenticateRequestDto } from './models/AuthenticateRequestDto';
 export type { AuthenticateResponseDto } from './models/AuthenticateResponseDto';
 export type { BadRequestResponse } from './models/BadRequestResponse';
 export { BalanceEntry } from './models/BalanceEntry';
+export { ChainDepositAddress } from './models/ChainDepositAddress';
 export type { Deadline } from './models/Deadline';
 export type { DefuseConfig } from './models/DefuseConfig';
 export type { DefusePayload_for_DefuseIntents } from './models/DefusePayload_for_DefuseIntents';
@@ -26,6 +27,8 @@ export type { GetAnyInputQuoteWithdrawals } from './models/GetAnyInputQuoteWithd
 export type { GetBalancesResponse } from './models/GetBalancesResponse';
 export { GetExecutionStatusResponse } from './models/GetExecutionStatusResponse';
 export type { GlobalContractId } from './models/GlobalContractId';
+export { HistoryItem } from './models/HistoryItem';
+export type { HistoryResponse } from './models/HistoryResponse';
 export { Intent } from './models/Intent';
 export { IntentAddPublicKey } from './models/IntentAddPublicKey';
 export { IntentAuthCall } from './models/IntentAuthCall';

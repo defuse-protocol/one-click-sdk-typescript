@@ -2,17 +2,24 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { ChainDepositAddress } from './ChainDepositAddress';
 export type Quote = {
     /**
      * The deposit address on the chain of `originAsset` when `depositType` is `ORIGIN_CHAIN`.
      *
      * The deposit address inside NEAR Intents (the verifier smart contract) when `depositType` is `INTENTS`.
+     *
+     * The account ID within Confidential Intents to which assets are to be transferred when `depositType` is `CONFIDENTIAL_INTENTS`. Fund the swap by submitting a signed transfer intent to this value. Direct token transfers are not supported.
      */
     depositAddress?: string;
     /**
      * Some deposit addresses **REQUIRE** a `memo` together with `depositAddress` for the deposit to be processed. This field is deposit-side metadata.
      */
     depositMemo?: string;
+    /**
+     * Deposit addresses across all bridge-supported blockchains for funding the same Intents account. Present only for public `ANY_INPUT` quotes (`depositType` `INTENTS`); the confidential rail does not support multi-chain funding addresses yet. Each entry forwards to the Intents account in `depositAddress`, so the user may deposit from any listed chain.
+     */
+    chainDepositAddresses?: Array<ChainDepositAddress>;
     /**
      * Amount of the origin asset
      */

@@ -4,7 +4,7 @@
 /* eslint-disable */
 export type Rebate = {
     /**
-     * Confidential Intents recipient identifier that receives this rebate share.
+     * Confidential Intents account identifier that receives this rebate share. Rebate delivery uses signed transfer intent on Confidential Intents; direct token transfers are not supported.
      */
     recipient: string;
     /**
