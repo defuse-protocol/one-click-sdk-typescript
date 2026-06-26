@@ -2,43 +2,23 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type TokenResponse = {
+export type ChainDepositAddress = {
     /**
-     * Unique asset identifier
+     * Blockchain on which this deposit address accepts funds for the quote.
      */
-    assetId: string;
+    blockchain: ChainDepositAddress.blockchain;
     /**
-     * Number of decimals for the token
+     * Deposit address on `blockchain`. Funds sent here are credited to the same Intents account.
      */
-    decimals: number;
+    address: string;
     /**
-     * Blockchain associated with the token
+     * Memo required together with `address` on chains that need it (e.g. Stellar, XRP, TON).
      */
-    blockchain: TokenResponse.blockchain;
-    /**
-     * Token symbol (e.g. BTC, ETH)
-     */
-    symbol: string;
-    /**
-     * Current price of the token in USD
-     */
-    price: number;
-    /**
-     * Date when the token price was last updated
-     */
-    priceUpdatedAt: string;
-    /**
-     * Contract address of the token
-     */
-    contractAddress?: string;
-    /**
-     * CoinGecko coin id, when known. Use it to fetch price history from CoinGecko.
-     */
-    coingeckoId?: string;
+    memo?: string;
 };
-export namespace TokenResponse {
+export namespace ChainDepositAddress {
     /**
-     * Blockchain associated with the token
+     * Blockchain on which this deposit address accepts funds for the quote.
      */
     export enum blockchain {
         NEAR = 'near',

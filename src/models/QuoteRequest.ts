@@ -40,6 +40,8 @@ export type QuoteRequest = {
      * - Any amount higher than `minAmountIn` is accepted and converted to the output asset as long as `minAmountOut` is met.
      * - The deposit must be at least `minAmountIn`, after applying the slippage constraint to the quoted amount. Deposits below `minAmountIn` are refunded if the total received by the deadline is below this amount.
      * - If deposits exceed the upper bound, the swap is still processed
+     *
+     * - `ANY_INPUT` — collects deposits and converts them to a destination asset. Used for fee aggregation and similar use cases. Only available for authorized partners.
      */
     swapType: QuoteRequest.swapType;
     /**
@@ -54,6 +56,7 @@ export type QuoteRequest = {
      * Type of deposit address:
      * - `ORIGIN_CHAIN` - deposit address on the origin chain.
      * - `INTENTS` - the account ID within NEAR Intents to which you should transfer assets.
+     * - `CONFIDENTIAL_INTENTS` - the account ID within Confidential Intents to which assets are to be transferred. Fund the swap from a Confidential Intents account by submitting a signed transfer intent to the quote `depositAddress`. Direct token transfers are not supported.
      */
     depositType: QuoteRequest.depositType;
     /**
@@ -72,6 +75,7 @@ export type QuoteRequest = {
      * Type of refund address:
      * - `ORIGIN_CHAIN` - assets are refunded to the `refundTo` address on the origin chain.
      * - `INTENTS` - assets are refunded to the `refundTo` Intents account.
+     * - `CONFIDENTIAL_INTENTS` - assets are refunded to the `refundTo` Confidential Intents account. On Confidential Intents, 1Click settles refunds via signed transfer intent rather than direct token transfer.
      */
     refundType: QuoteRequest.refundType;
     /**
@@ -105,7 +109,8 @@ export type QuoteRequest = {
     /**
      * Type of recipient address:
      * - `DESTINATION_CHAIN` - assets are transferred to the chain of `destinationAsset`.
-     * - `INTENTS` - assets are transferred to an account inside Intents
+     * - `INTENTS` - assets are transferred to an account inside Intents.
+     * - `CONFIDENTIAL_INTENTS` - assets are transferred to the `recipient` account inside Confidential Intents. On Confidential Intents, 1Click settles swap output via signed transfer intent rather than direct token transfer.
      */
     recipientType: QuoteRequest.recipientType;
     /**
@@ -165,6 +170,8 @@ export namespace QuoteRequest {
      * - Any amount higher than `minAmountIn` is accepted and converted to the output asset as long as `minAmountOut` is met.
      * - The deposit must be at least `minAmountIn`, after applying the slippage constraint to the quoted amount. Deposits below `minAmountIn` are refunded if the total received by the deadline is below this amount.
      * - If deposits exceed the upper bound, the swap is still processed
+     *
+     * - `ANY_INPUT` — collects deposits and converts them to a destination asset. Used for fee aggregation and similar use cases. Only available for authorized partners.
      */
     export enum swapType {
         EXACT_INPUT = 'EXACT_INPUT',
@@ -176,6 +183,7 @@ export namespace QuoteRequest {
      * Type of deposit address:
      * - `ORIGIN_CHAIN` - deposit address on the origin chain.
      * - `INTENTS` - the account ID within NEAR Intents to which you should transfer assets.
+     * - `CONFIDENTIAL_INTENTS` - the account ID within Confidential Intents to which assets are to be transferred. Fund the swap from a Confidential Intents account by submitting a signed transfer intent to the quote `depositAddress`. Direct token transfers are not supported.
      */
     export enum depositType {
         ORIGIN_CHAIN = 'ORIGIN_CHAIN',
@@ -186,6 +194,7 @@ export namespace QuoteRequest {
      * Type of refund address:
      * - `ORIGIN_CHAIN` - assets are refunded to the `refundTo` address on the origin chain.
      * - `INTENTS` - assets are refunded to the `refundTo` Intents account.
+     * - `CONFIDENTIAL_INTENTS` - assets are refunded to the `refundTo` Confidential Intents account. On Confidential Intents, 1Click settles refunds via signed transfer intent rather than direct token transfer.
      */
     export enum refundType {
         ORIGIN_CHAIN = 'ORIGIN_CHAIN',
@@ -195,7 +204,8 @@ export namespace QuoteRequest {
     /**
      * Type of recipient address:
      * - `DESTINATION_CHAIN` - assets are transferred to the chain of `destinationAsset`.
-     * - `INTENTS` - assets are transferred to an account inside Intents
+     * - `INTENTS` - assets are transferred to an account inside Intents.
+     * - `CONFIDENTIAL_INTENTS` - assets are transferred to the `recipient` account inside Confidential Intents. On Confidential Intents, 1Click settles swap output via signed transfer intent rather than direct token transfer.
      */
     export enum recipientType {
         DESTINATION_CHAIN = 'DESTINATION_CHAIN',
