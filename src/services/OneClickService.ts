@@ -22,13 +22,19 @@ export class OneClickService {
      * Retrieves a list of tokens currently supported by the 1Click API for asset swaps.
      *
      * Each token entry includes its blockchain, contract address (if available), price in USD, and other metadata such as symbol and decimals.
+     * @param ondoTokens Show Ondo tokens if the query is set
      * @returns TokenResponse
      * @throws ApiError
      */
-    public static getTokens(): CancelablePromise<Array<TokenResponse>> {
+    public static getTokens(
+        ondoTokens?: string,
+    ): CancelablePromise<Array<TokenResponse>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/v0/tokens',
+            query: {
+                'ondoTokens': ondoTokens,
+            },
         });
     }
     /**
@@ -149,7 +155,7 @@ export class OneClickService {
      * Generate an intent for signing
      * Generates an unsigned intent payload that needs to be signed by the user.
      *
-     * This endpoint takes a quote's deposit address and other parameters, validates the quote state, and returns an intent payload formatted according to the specified signing standard (e.g., NEP413, ERC191).
+     * This endpoint takes a quote or limit-order deposit address, validates the target state and caller ownership when required, and returns an intent payload formatted according to the specified signing standard (e.g., NEP413, ERC191).
      *
      * The generated intent must be signed by the user's wallet and then submitted via the `/submit-intent` endpoint to complete the action (e.g. swap).
      *
@@ -177,7 +183,7 @@ export class OneClickService {
      * Submit a signed intent
      * Submits a signed intent to execute.
      *
-     * After generating an intent via `/generate-intent` and having the user sign it with their wallet, submit the signed intent through this endpoint.
+     * After generating an intent for a quote or limit order via `/generate-intent` and having the user sign it with their wallet, submit the signed intent through this endpoint.
      *
      * The system validates the signature, processes the intent, and returns the intent hash upon successful submission.
      *

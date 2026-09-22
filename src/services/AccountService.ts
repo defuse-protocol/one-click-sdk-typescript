@@ -31,7 +31,7 @@ export class AccountService {
     }
     /**
      * Get transaction history
-     * Returns paginated public and confidential transaction history. For the initial request, omit both nextCursor and prevCursor to retrieve the latest history. For subsequent requests, pass either nextCursor or prevCursor from the previous response.
+     * Returns paginated public and confidential transaction history. History is invite-only for now. For the initial request, omit both nextCursor and prevCursor to retrieve the latest history. For subsequent requests, pass either nextCursor or prevCursor from the previous response.
      * @param prevCursor Pass the prevCursor value from a previous response to fetch older items. Omit both cursors for the initial request. Do not pass together with nextCursor.
      * @param nextCursor Pass the nextCursor value from a previous response to poll for newer items. Omit both cursors for the initial request. Do not pass together with prevCursor.
      * @param status Filter by statuses
@@ -74,6 +74,7 @@ export class AccountService {
             },
             errors: {
                 401: `Unauthorized - supplied user session token is invalid or expired`,
+                403: `History is invite-only for now`,
             },
         });
     }
