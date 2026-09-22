@@ -74,6 +74,9 @@ export namespace TokenResponse {
         STARKNET = 'starknet',
         ALEO = 'aleo',
         HYPERCORE = 'hypercore',
+        FOGO = 'fogo',
+        HOOD = 'hood',
+        HLEVM = 'hlevm',
     }
 }
 

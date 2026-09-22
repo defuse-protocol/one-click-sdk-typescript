@@ -118,7 +118,7 @@ export type QuoteRequest = {
      */
     deadline: string;
     /**
-     * Confidentiality mode for this quote. Invite-only for now: if set, API may return an invite-only message until rollout is enabled for your integration.
+     * Confidentiality mode for this quote. PUBLIC is the default; BASIC or ADVANCED request Confidential Intents handling.
      */
     confidentiality?: QuoteRequest.confidentiality;
     /**
@@ -138,6 +138,10 @@ export type QuoteRequest = {
      * List of recipients and their fees
      */
     appFees?: Array<AppFee>;
+    /**
+     * Opt into an insured swap. When `true`, an additional 0.02% (2 basis points) insurance fee is charged on top of any other fees.
+     */
+    insured?: boolean;
 };
 export namespace QuoteRequest {
     /**
@@ -213,7 +217,7 @@ export namespace QuoteRequest {
         CONFIDENTIAL_INTENTS = 'CONFIDENTIAL_INTENTS',
     }
     /**
-     * Confidentiality mode for this quote. Invite-only for now: if set, API may return an invite-only message until rollout is enabled for your integration.
+     * Confidentiality mode for this quote. PUBLIC is the default; BASIC or ADVANCED request Confidential Intents handling.
      */
     export enum confidentiality {
         PUBLIC = 'public',
