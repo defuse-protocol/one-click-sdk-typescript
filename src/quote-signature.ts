@@ -59,9 +59,6 @@ export type OneClickFullSignedQuote = OneClickDrySignedQuote & {
     deadline?: Quote['deadline'];
     timeWhenInactive?: Quote['timeWhenInactive'];
     timeEstimate?: Quote['timeEstimate'];
-    virtualChainRecipient?: Quote['virtualChainRecipient'];
-    virtualChainRefundRecipient?: Quote['virtualChainRefundRecipient'];
-    customRecipientMsg?: Quote['customRecipientMsg'];
     refundFee?: Quote['refundFee'];
     withdrawFee?: Quote['withdrawFee'];
 };
@@ -140,10 +137,6 @@ function buildSignedQuote(
         deadline: quote.deadline || undefined,
         timeWhenInactive: quote.timeWhenInactive || undefined,
         timeEstimate: quote.timeEstimate || undefined,
-        virtualChainRecipient: quote.virtualChainRecipient || undefined,
-        virtualChainRefundRecipient:
-            quote.virtualChainRefundRecipient || undefined,
-        customRecipientMsg: quote.customRecipientMsg || undefined,
         refundFee: quote.refundFee || undefined,
         withdrawFee: quote.withdrawFee || undefined,
     };

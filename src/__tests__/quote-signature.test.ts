@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import {
+    buildSignedQuoteRequest,
+    hashQuote,
+    quoteHash,
     verifyQuoteSignature,
     type OneClickQuoteResponse,
 } from '../quote-signature';
@@ -189,6 +192,32 @@ describe('verifyQuoteSignature', () => {
     });
 
     describe('non-dry quote verification (dry: false)', () => {
+        it('keeps request-only routing fields in the signed payload', () => {
+            const response = {
+                ...STAGING_NON_DRY_QUOTE,
+                quoteRequest: {
+                    ...STAGING_NON_DRY_QUOTE.quoteRequest,
+                    virtualChainRecipient: '0xrecipient',
+                    virtualChainRefundRecipient: '0xrefund',
+                    customRecipientMsg: 'recipient message',
+                },
+            } as OneClickQuoteResponse;
+            const {
+                virtualChainRecipient: _,
+                virtualChainRefundRecipient: __,
+                customRecipientMsg: ___,
+                ...signedQuote
+            } = response.quote;
+
+            expect(quoteHash(response)).toBe(
+                hashQuote(
+                    buildSignedQuoteRequest(response),
+                    signedQuote,
+                    response.timestamp,
+                ),
+            );
+        });
+
         it('verifies a valid non-dry quote signature against full payload', () => {
             const result = verifyQuoteSignature(
                 STAGING_NON_DRY_QUOTE,
