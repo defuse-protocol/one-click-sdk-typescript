@@ -18,3 +18,9 @@ export type {
     OneClickFullSignedQuote,
     OneClickDrySignedQuote
 } from './quote-signature';
+
+export { verifyIntentDestination } from './verify-destination';
+export type {
+    VerifyDestinationResult,
+    DestinationMismatch,
+} from './verify-destination';
